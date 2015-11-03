@@ -9,8 +9,7 @@ import symbols.*;
  * Beispielsprache. Die Instanzenvariablen sind
  * 		line für die momentane Zeilennummer der Eingabe
  * 		peek für das lookahead-Zeichen
- * 		words für eine Tabelle der reservierten Wörter und aller 
- * 			  im Programm auftretenden Identifier.
+ * 		words für eine Tabelle der reservierten Wörter
  */
 
 public class Lexer {
@@ -145,7 +144,7 @@ public class Lexer {
 			Word w = (Word) words.get(s);  // Suche Wort in Tabelle
 			if (w != null)
 				return w;				   // Wort gefunden
-			w = new Word(s, Tag.ID);  
+			w = new Word(s, Tag.ID);   
 			words.put(s, w);				// Wort eintragen
 			return w;
 		}

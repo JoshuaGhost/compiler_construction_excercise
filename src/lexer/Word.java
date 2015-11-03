@@ -1,15 +1,11 @@
 package lexer;
 
 /*
- * Die Klasse Word beschreibt Eigenschaften von Identifier, reservierten Wörtern
- * und weiteren speziellen Tokenklassen.
- *
- * Zusätzlich zur Tokenklasse (codiert durch tag)
- * hat so ein Token auch einen Tokenwert, der 
- * das zugehörige Lexeme ist. 
- * In Form von Klassenvariablen werden einige dieser Token
- * zut Verfügung gestellt.
- * 
+ * Die Klasse beschreibt Eigenschaften von reservierten Wörtern.
+ * Jedes reservierte Wort stellt ein Token dar. Zusätzlich zur Tokenklasse, 
+ * (dargestellt durch tag) hat so ein Token auch einen Tokenwert, der 
+ * das zugehörige Lexeme ist. In Form von Klassenvariablen werden diese 
+ * Token zur Verfügung gestellt. 
  * @author rp
  *
  */

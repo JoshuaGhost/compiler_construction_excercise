@@ -14,5 +14,5 @@ public class Token {
 	public Token(int t) {
 		tag = t;
 	}
-
+	
 }

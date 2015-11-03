@@ -2,11 +2,14 @@ package parser;
 
 import java.io.*;
 import lexer.*;
+import inter.*;
 
 /*
  * Diese Klasse implementiert einen rekursive descent Parser für die 
  * Beispielsprache. Die Instanzenvariable lex verweist auf einen lexikalen
  * Scanner für diese Sprache. look enthält das lookahead-Token 
+ * Beim Parsen wird ein Syntax-Baum erzeugt, die dazu notwendigen 
+ * Klassen befinden sich im Paket inter.
  */
 
 public class Parser {
@@ -34,15 +37,17 @@ public class Parser {
 			error("syntax error");
 	}
 
-	public void program() throws IOException { 			// program -> block
-		block();
+	public Program program() throws IOException { 			// program -> block
+		Block b = block();
+		return new Program(b);
 	}
 
-	void block() throws IOException { 					// block -> { decls stmts }
+	Block block() throws IOException { 					// block -> { decls stmts }
 		match('{');
 		decls();
-		stmts();
+		Stmt s = stmts();
 		match('}');
+		return new Block(s);
 	}
 
 	void decls() throws IOException {
@@ -76,207 +81,232 @@ public class Parser {
 		return;
 	}
 
-	void stmts() throws IOException { 
+	Stmt stmts() throws IOException { 
 		if (look.tag == '}')							// stmts -> epsilon
-			return;
-		else {											// stmts -> stmt stmts
-			stmt();
-			stmts();
-		}
+			return EmptyStmt.Null;
+		else // stmts -> stmt stmts
+			return new Seq(stmt(), stmts());
 	}
 
-	void stmt() throws IOException {
+	Stmt stmt() throws IOException {
+		Expr x;
+		Stmt s1, s2;
+		Assignment a1, a2;
 
 		switch (look.tag) {
 		case ';':								// stmt -> ;
 			move();
-			return;
+			return EmptyStmt.Null;
+			
 		case Tag.IF:									
 			match(Tag.IF);
 			match('(');
-			bool();
+			x = bool();
 			match(')');
-			stmt();
+			s1 = stmt();
 			if (look.tag != Tag.ELSE)				
-				return;							// stmt -> if (bool) stmt
+				return new If(x,s1);							// stmt -> if (bool) stmt
 			match(Tag.ELSE);					// stmt -> if (bool) stmt else stmt
-			stmt();
-			return;
+			s2 = stmt();
+			return new Else(x, s1, s2);
+			
 		case Tag.WHILE:							// stmt -> while (bool) stmt
+			While whileNode = new While();
 			match(Tag.WHILE);
 			match('(');
-			bool();
+			x = bool();
 			match(')');
-			stmt();
-			return;
+			s1 = stmt();
+			whileNode.init(x, s1);
+			return whileNode;
+			
 		case Tag.DO:							// stmt -> do stmt while (bool)
+			Do doNode = new Do();
 			match(Tag.DO);
-			stmt();
+			s1 = stmt();
 			match(Tag.WHILE);
 			match('(');
-			bool();
+			x = bool();
 			match(')');
 			match(';');
-			return;
+			doNode.init(s1,  x);
+			return doNode;
+			
 		case Tag.FOR: 							// stmt -> for (assign; bool; assign) stmt
+			For forNode = new For();
 			match(Tag.FOR);
 			match('(');
-			assign();	 // erste Komponente ist ein assign
+			a1 = assign();	 // erste Komponente ist ein assign
 			match(';');
-			bool();
+			x = bool();
 			match(';');
-			assign();	// dritte Komponente ist ein assign
+			a2 = assign();	// dritte Komponente ist ein assign
 			match(')'); 
-			stmt();
-			return;
+			s1 = stmt();
+			forNode.init(a1, x, a2, s1);
+			return forNode;
+			
 		case Tag.BREAK:							// stmt -> break ;
 			match(Tag.BREAK);
 			match(';');
-			return;
+			return new Break();
+			
 		case '{':								// stmt -> block
-			block();
-			return;
+			return block();
+			
 		default:								// stmt -> assign ;
-			assign();
+			a1 = assign();
 			match(';');
-			return;
+			return new AssignStmt(a1);
 		}
 	}
 
-	void assign() throws IOException {					
+	Assignment assign() throws IOException {					
+		Assignment ass;
+		Token t = look;
 		match(Tag.ID);
+		Id id = new Id((Word) t);
 		if (look.tag == '=') { 							// assign -> id = bool
 			move();
-			bool();
+			ass = new AssignId(id, bool());
 		} else { 										// assign -> id offset = bool
-			offset();
+			Access acc = offset(id);
 			match('=');
-			bool();
+			ass = new AssignElem(acc, bool());
 		}
-		return;
+		return ass;
 	}
 
-	void bool() throws IOException {					// bool -> bool or join | join
-		join();
+	Expr bool() throws IOException {					// bool -> bool or join | join
+		Expr e = join();
 		while (look.tag == Tag.OR) {
+			Token tok = look;
 			move();
-			join();
+			e = new Or(tok, e,join());
 		}
-		return;
+		return e;
 	}
 
-	void join() throws IOException {					// join -> join and equality | equality
-		equality();
+	Expr join() throws IOException {					// join -> join and equality | equality
+		Expr e = equality();
 		while (look.tag == Tag.AND) {
+			Token tok = look;
 			move();
-			equality();
+			e = new And(tok, e, equality());
 		}
-		return;
+		return e;
 	}
 
-	void equality() throws IOException {				// equality -> equality eq rel |
-		rel();											//			   equality ne rel | rel
+	Expr equality() throws IOException {				// equality -> equality eq rel |
+		Expr e = rel();											//			   equality ne rel | rel
 		while (look.tag == Tag.EQ || look.tag == Tag.NE) {
+			Token tok = look;
 			move();
-			rel();
+			e = new Rel(tok, e, rel());
 		}
-		return;
+		return e;
 	}
 
-	void rel() throws IOException {						// rel -> expr < expr | expr le expr |
-		expr();											//        expr ge expr | expr > expr | expr
+	Expr rel() throws IOException {						// rel -> expr < expr | expr le expr |
+		Expr e = expr();											//        expr ge expr | expr > expr | expr
 		switch (look.tag) {
 		case '<':
 		case Tag.LE:
 		case Tag.GE:
 		case '>':
+			Token tok = look;
 			move();
-			expr();
-			return;
+			return new Rel(tok, e, expr());
 		default:
-			return;
+			return e;
 		}
 	}
 
-	void expr() throws IOException {					// expr -> expr + term | expr - term | term
-		term();
+	Expr expr() throws IOException {					// expr -> expr + term | expr - term | term
+		Expr e = term();
 		while (look.tag == '+' || look.tag == '-') {
+			Token tok = look;
 			move();
-			term();
+			e = new Arith(tok, e, term());
 		}
-		return;
+		return e;
 	}
 
-	void term() throws IOException {					// term -> term * unary | term / unary | unary
-		unary();
+	Expr term() throws IOException {					// term -> term * unary | term / unary | unary
+		Expr e = unary();
 		while (look.tag == '*' || look.tag == '/') {
+			Token tok = look;
 			move();
-			unary();
+			e = new Arith(tok, e, unary());
 		}
-		return;
+		return e;
 	}
 
-	void unary() throws IOException {						
+	Expr unary() throws IOException {	
 		if (look.tag == '-') {							// unary -> - unary
 			move();
-			unary();
-			return;
+			return new Unary(Word.minus, unary());
 		} else if (look.tag == '!') {					// unary -> ! unary
+			Token tok = look;
 			move();
-			unary();
-			return;
+			return new Not(tok, unary());
 		} else {										// unary -> factor
-			factor();
-			return;
+			return factor();
 		}
-
 	}
 
-	void factor() throws IOException {
+	Expr factor() throws IOException {
+		Expr e = null;
 		switch (look.tag) {
 		case '(':										// factor -> (bool)
 			move();
-			bool();
+			e = bool();
 			match(')');
-			return;
+			return e;
 		case Tag.NUM:									// factor -> num
+			e = new Constant(look);
 			move();
-			return;
+			return e;
 		case Tag.REAL:									// factor -> real
+			e = new Constant(look);
 			move();
-			return;
+			return e;
 		case Tag.TRUE:									// factor -> true
+			e = Constant.True;
 			move();
-			return;
+			return e;
 		case Tag.FALSE:									// factor -> false
+			e = Constant.False;
 			move();
-			return;
+			return e;
 		case Tag.ID:									// factor -> id offset
+			Id id = new Id((Word) look);
 			move();
 			if (look.tag != '[')
-				return;
+				return id;
 			else {
-				offset();
-				return;
+				return offset(id);
 			}
 		default:
 			error("syntax error");
-			return;
+			return e;
 
 		}
 	}
 
-	void offset() throws IOException { 					// offset -> [bool] offset | epsilon
+	Access offset(Id a) throws IOException { 			// offset -> [bool] offset | epsilon
+		Expr e;
 		match('[');
-		bool();
+		e = bool();
 		match(']');
+		Access acc = new Access(a, e);
 		while (look.tag == '[') { 						// multi-dimensional array
 			match('[');
-			bool();
+			e = bool();
 			match(']');
-
+			acc = new Access((Expr) acc, e);
 		}
-		return;
+		return acc;
 	}
 
 }
