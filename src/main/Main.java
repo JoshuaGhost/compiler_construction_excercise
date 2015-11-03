@@ -20,7 +20,7 @@ public class Main {
 		Lexer lex = new Lexer();
 		Parser parse = new Parser(lex);
 		parse.program();
-		System.out.println("\n程序运行结束，无异常。\n");
+		System.out.println("\nParsing erfolgreich beendet\n");
 	}
 
 }

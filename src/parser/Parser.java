@@ -4,7 +4,7 @@ import java.io.*;
 import lexer.*;
 
 /*
- * Diese Klasse implementiert einen recursive descent Parser für die 
+ * Diese Klasse implementiert einen rekursive descent Parser für die 
  * Beispielsprache. Die Instanzenvariable lex verweist auf einen lexikalen
  * Scanner für diese Sprache. look enthält das lookahead-Token 
  */
@@ -48,13 +48,12 @@ public class Parser {
 	void decls() throws IOException {
 		while (look.tag == Tag.BASIC) { 				// decls -> type id
 			type();
-			while (true) {
+			do {
 				match(Tag.ID);
-				if (look.tag == ',')
-					match(',');
-				else
+				if (look.tag != ',')	// kein weiterer ID zu dieser Typ-Deklaration
 					break;
-			}
+				move();					// Komma überlesen
+			} while (true);
 			match(';');
 		}
 	}
@@ -89,7 +88,7 @@ public class Parser {
 	void stmt() throws IOException {
 
 		switch (look.tag) {
-		case ';':										// stmt -> ;
+		case ';':								// stmt -> ;
 			move();
 			return;
 		case Tag.IF:									
@@ -99,29 +98,18 @@ public class Parser {
 			match(')');
 			stmt();
 			if (look.tag != Tag.ELSE)				
-				return;									// stmt -> if (bool) stmt
-			match(Tag.ELSE);							// stmt -> if (bool) stmt else stmt
+				return;							// stmt -> if (bool) stmt
+			match(Tag.ELSE);					// stmt -> if (bool) stmt else stmt
 			stmt();
 			return;
-		case Tag.WHILE:									// stmt -> while (bool) stmt
+		case Tag.WHILE:							// stmt -> while (bool) stmt
 			match(Tag.WHILE);
 			match('(');
 			bool();
 			match(')');
 			stmt();
 			return;
-		case Tag.FOR:									// stmt -> for (assign bool assign) stmt
-			match(Tag.FOR);
-			match('(');
-			assign();
-			match(';');
-			bool();
-			match(';');
-			assign();
-			match(')');
-			stmt();
-			return;
-		case Tag.DO:									// stmt -> do stmt while (bool)
+		case Tag.DO:							// stmt -> do stmt while (bool)
 			match(Tag.DO);
 			stmt();
 			match(Tag.WHILE);
@@ -130,14 +118,25 @@ public class Parser {
 			match(')');
 			match(';');
 			return;
-		case Tag.BREAK:									// stmt -> break ;
+		case Tag.FOR: 							// stmt -> for (assign; bool; assign) stmt
+			match(Tag.FOR);
+			match('(');
+			assign();	 // erste Komponente ist ein assign
+			match(';');
+			bool();
+			match(';');
+			assign();	// dritte Komponente ist ein assign
+			match(')'); 
+			stmt();
+			return;
+		case Tag.BREAK:							// stmt -> break ;
 			match(Tag.BREAK);
 			match(';');
 			return;
-		case '{':										// stmt -> block
+		case '{':								// stmt -> block
 			block();
 			return;
-		default:										// stmt -> assign ;
+		default:								// stmt -> assign ;
 			assign();
 			match(';');
 			return;

@@ -22,6 +22,7 @@ public class Word extends Token {
 		lexeme = s;
 	}
 
+
 	public static final Word
 		and = new Word("&&", Tag.AND),
 		or = new Word("||", Tag.OR),
@@ -32,5 +33,6 @@ public class Word extends Token {
 		minus = new Word("minus", Tag.MINUS),
 		True = new Word("true", Tag.TRUE),
 		False = new Word("false", Tag.FALSE);
+
 
 }

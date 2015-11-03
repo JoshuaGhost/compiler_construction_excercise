@@ -22,7 +22,6 @@ public class Lexer {
 	 * Durch diese Tabelle ist gewährleistet, dass Identifier-Tokens eindeutig sind.
 	 */
 
-
 	void reserve(Word w) {
 		words.put(w.lexeme, w);
 	}
@@ -31,8 +30,8 @@ public class Lexer {
 		reserve(new Word("if", Tag.IF));
 		reserve(new Word("else", Tag.ELSE));
 		reserve(new Word("while", Tag.WHILE));
-		reserve(new Word("for", Tag.FOR));
 		reserve(new Word("do", Tag.DO));
+		reserve(new Word("for", Tag.FOR));	
 		reserve(new Word("break", Tag.BREAK));
 		reserve(Word.True);
 		reserve(Word.False);
@@ -41,18 +40,17 @@ public class Lexer {
 		reserve(Type.Bool);
 		reserve(Type.Float);
 	}
-	
 	/*
 	 * readch() liest das nächste Zeichen der Eingabe und speichert es in peek
 	 */
 	void readch() throws IOException {
 		peek = (char) System.in.read();
 	}
-	
 	/*
 	 * readch(char c) liest das nächste Zeichen der Eingabe und prüft, 
 	 * ob es mit c übereinstimmt.
 	 */
+
 	boolean readch(char c) throws IOException {
 		readch();
 		if (peek != c)
@@ -60,33 +58,22 @@ public class Lexer {
 		peek = ' ';
 		return true;
 	}
-	
-	/*
-	 * rmComments(): full name remove comments
-	 */
-	void rmComments() throws IOException {
-		for (;; readch()) {
-			if (peek == '\n') {
-				line = line + 1;
-				break;
-			}
-		}
-	}
-	
-	public Token scan() throws IOException {
 
+	public Token scan() throws IOException {
 		for (;; readch()) {
 			if (peek == ' ' || peek == '\t' || peek == '\r')
 				continue;
-			if (peek == '/')
+			if (peek == '/') 	/* hier werden Kommentare verarbeitet */
 				if (!readch('/'))
-					return (new Token('/'));
+					return(new Token('/'));
 				else
-					do readch();
-					while(peek != '\n');
+					do
+						readch();
+					while (peek != '\n');
 			if (peek == '\n')
 				line = line + 1;
-			else break;
+			else
+				break;
 		}
 
 		/* hier werden Token erkannt, die aus mehr als einem Zeichen bestehen */
@@ -158,7 +145,7 @@ public class Lexer {
 			Word w = (Word) words.get(s);  // Suche Wort in Tabelle
 			if (w != null)
 				return w;				   // Wort gefunden
-			w = new Word(s, Tag.ID);
+			w = new Word(s, Tag.ID);  
 			words.put(s, w);				// Wort eintragen
 			return w;
 		}
