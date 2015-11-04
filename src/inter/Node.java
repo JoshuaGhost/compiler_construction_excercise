@@ -10,7 +10,7 @@ import lexer.*;
 
 public abstract class Node {
 	int lexline = 0;
-
+	
 	Node() {
 		lexline = Lexer.line;
 	}

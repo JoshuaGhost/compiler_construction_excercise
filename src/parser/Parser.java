@@ -16,6 +16,8 @@ public class Parser {
 	private Lexer lex; 	// Lexical Analyser für diesen Parser
 	private Token look; // lookahead Token
 
+	private int k = -1;
+	
 	public Parser(Lexer l) throws IOException {
 		lex = l;
 		move();
@@ -37,15 +39,27 @@ public class Parser {
 			error("syntax error");
 	}
 
+	private void ps(int k, String name) {
+		for (int i = 0; i < k; i++) {
+			System.out.print("-");
+		}
+		System.out.println(name);
+	}
+	
 	public Program program() throws IOException { 			// program -> block
+		k += 1;
+		ps(k, SynNode.PROGRAM);
 		Block b = block();
+		k -= 1;
 		return new Program(b);
 	}
 
 	Block block() throws IOException { 					// block -> { decls stmts }
 		match('{');
 		decls();
+		k+=1;
 		Stmt s = stmts();
+		k-=1;
 		match('}');
 		return new Block(s);
 	}
@@ -82,81 +96,136 @@ public class Parser {
 	}
 
 	Stmt stmts() throws IOException { 
-		if (look.tag == '}')							// stmts -> epsilon
+		if (look.tag == '}') {							// stmts -> epsilon
+			k+=1;
+			ps(k, SynNode.EMPTY);
+			k-=1;
 			return EmptyStmt.Null;
-		else // stmts -> stmt stmts
-			return new Seq(stmt(), stmts());
+		}
+		else {// stmts -> stmt stmts
+			ps(k, SynNode.STMT);
+			//k += 1;
+			Stmt st = stmt();
+			//k-=1;
+			Seq seq = new Seq(st, stmts());
+			return seq;
+		}
 	}
 
 	Stmt stmt() throws IOException {
 		Expr x;
 		Stmt s1, s2;
 		Assignment a1, a2;
-
+		
+		k+=1;
 		switch (look.tag) {
 		case ';':								// stmt -> ;
 			move();
+			ps(k, SynNode.EMPTY);
+			k-=1;
 			return EmptyStmt.Null;
 			
-		case Tag.IF:									
+		case Tag.IF:		
+			ps(k, SynNode.IF);
 			match(Tag.IF);
 			match('(');
 			x = bool();
 			match(')');
+			k += 1;
+			ps(k, SynNode.STMT);
 			s1 = stmt();
-			if (look.tag != Tag.ELSE)				
+			k-=1;
+			if (look.tag != Tag.ELSE) {
+				k-=1;
 				return new If(x,s1);							// stmt -> if (bool) stmt
+			}
 			match(Tag.ELSE);					// stmt -> if (bool) stmt else stmt
+			ps(k, SynNode.ELSE);
+			k+=1;
+			ps(k, SynNode.STMT);
 			s2 = stmt();
+			k-=1;
+			k-=1;
 			return new Else(x, s1, s2);
 			
 		case Tag.WHILE:							// stmt -> while (bool) stmt
+			ps(k, SynNode.WHILE);
 			While whileNode = new While();
 			match(Tag.WHILE);
 			match('(');
 			x = bool();
 			match(')');
+			k+=1;
+			ps(k, SynNode.STMT);
 			s1 = stmt();
+			k = k-1;
 			whileNode.init(x, s1);
+			k-=1;
 			return whileNode;
 			
 		case Tag.DO:							// stmt -> do stmt while (bool)
+			ps(k, SynNode.DO);
 			Do doNode = new Do();
 			match(Tag.DO);
+			k+=1;
+			ps(k, SynNode.STMT);
 			s1 = stmt();
+			k-=1;
 			match(Tag.WHILE);
 			match('(');
 			x = bool();
 			match(')');
 			match(';');
 			doNode.init(s1,  x);
+			k-=1;
 			return doNode;
 			
 		case Tag.FOR: 							// stmt -> for (assign; bool; assign) stmt
+			ps(k, SynNode.FOR);
 			For forNode = new For();
 			match(Tag.FOR);
 			match('(');
+			k+=1;
+			ps(k, SynNode.ASSIGNMENT);
 			a1 = assign();	 // erste Komponente ist ein assign
+			k-=1;
 			match(';');
+			k+=1;
+			//ps(k, SynNode.EXPR);
 			x = bool();
+			k-=1;
 			match(';');
+			k+=1;
+			ps(k, SynNode.ASSIGNMENT);
 			a2 = assign();	// dritte Komponente ist ein assign
+			k-=1;
 			match(')'); 
+			k+=1;
+			ps(k, SynNode.STMT);
 			s1 = stmt();
+			k-=1;
 			forNode.init(a1, x, a2, s1);
+			k-=1;
 			return forNode;
 			
 		case Tag.BREAK:							// stmt -> break ;
+			ps(k, SynNode.BREAK);
 			match(Tag.BREAK);
 			match(';');
+			k-=1;
 			return new Break();
 			
 		case '{':								// stmt -> block
-			return block();
+			ps(k, SynNode.BLOCK);
+			Block blk = block();
+			k-=1;
+			return blk;
 			
 		default:								// stmt -> assign ;
+			ps(k, SynNode.ASSIGNMENT);
 			a1 = assign();
 			match(';');
+			k-=1;
 			return new AssignStmt(a1);
 		}
 	}
