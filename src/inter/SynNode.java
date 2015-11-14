@@ -18,7 +18,7 @@ public class SynNode {
 	ASSIGNSTMT = "AssignStmt",
 	FOR = "For",
 	SEQ = "Seq",
-	ELSE = "Else",
+	ELSE = "IfElse",
 	BREAK = "Break",
 	EMPTY = "Empty";
 }

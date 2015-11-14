@@ -27,4 +27,19 @@ public class For extends Stmt {
 		stmt = s;
 	}
 
+	@Override
+	public String toString() {
+		return ("for ("+init_ass.toString()+";"+
+						expr.toString()+";"+
+						iter_ass.toString()+")"+
+						stmt.toString());
+	}
+	
+	public String toString(int k) {
+		return super.toString(k) + "\n" +
+			   init_ass.toString(k+1) + "\n" +
+			   expr.toString(k+1) + "\n" +
+			   iter_ass.toString(k+1) + "\n" +
+			   stmt.toString(k+1);
+	}
 }

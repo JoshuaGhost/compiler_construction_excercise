@@ -16,4 +16,14 @@ public abstract class Expr extends Node {
 		op = tok;
 	}
 	
+	@Override
+	public String toString() {
+		
+		return op.toString();
+	}
+
+	public String toString(int k) {
+		return super.toString(k);
+	}
+	
 }

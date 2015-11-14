@@ -16,4 +16,14 @@ public class AssignId extends Assignment {
 		expr = x;
 	}
 	
+	@Override
+	public String toString() {
+		return (ident.toString()+"="+expr.toString());
+	}
+	
+	public String toString(int k) {
+		return super.toString(k) + "\n" +
+			   ident.toString(k+1) + "\n" +
+			   expr.toString(k+1);
+	}
 }

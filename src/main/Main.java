@@ -23,7 +23,8 @@ public class Main {
 		Parser parse = new Parser(lex);
 		Program root = parse.program();
 		System.out.println("\nProgramm erfolgreich beendet\n");
-
+		System.out.println(root.toString()+"\n");
+		System.out.println(root.toString(0));
 	}
 
 }

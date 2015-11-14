@@ -14,4 +14,13 @@ public class AssignStmt extends Stmt {
 		assign = x;
 	}
 	
+	@Override
+	public String toString() {
+		return assign.toString()+";";
+	}
+	
+	public String toString(int k) {
+		return super.toString(k) + "\n" +
+			   assign.toString(k+1);
+	}
 }

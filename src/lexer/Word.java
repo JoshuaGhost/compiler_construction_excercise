@@ -18,6 +18,10 @@ public class Word extends Token {
 		lexeme = s;
 	}
 
+	@Override
+	public String toString() {
+		return lexeme;
+	}
 
 	public static final Word
 		and = new Word("&&", Tag.AND),

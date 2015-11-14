@@ -40,10 +40,16 @@ public class Parser {
 	}
 
 	private void ps(int k, String name) {
+		/*
 		for (int i = 0; i < k; i++) {
-			System.out.print("-");
+			System.out.print("| ");
 		}
 		System.out.println(name);
+		*/
+	}
+	
+	private void ps(int k, Node node) {
+		//System.out.println(node.toString(k));
 	}
 	
 	public Program program() throws IOException { 			// program -> block
@@ -57,6 +63,7 @@ public class Parser {
 	Block block() throws IOException { 					// block -> { decls stmts }
 		match('{');
 		decls();
+		ps(k, SynNode.BLOCK);
 		k+=1;
 		Stmt s = stmts();
 		k-=1;
@@ -97,17 +104,15 @@ public class Parser {
 
 	Stmt stmts() throws IOException { 
 		if (look.tag == '}') {							// stmts -> epsilon
-			k+=1;
 			ps(k, SynNode.EMPTY);
-			k-=1;
 			return EmptyStmt.Null;
 		}
 		else {// stmts -> stmt stmts
-			ps(k, SynNode.STMT);
-			//k += 1;
+			ps(k, SynNode.SEQ);
+			//k+=1;
 			Stmt st = stmt();
-			//k-=1;
 			Seq seq = new Seq(st, stmts());
+			//k-=1;
 			return seq;
 		}
 	}
@@ -117,33 +122,37 @@ public class Parser {
 		Stmt s1, s2;
 		Assignment a1, a2;
 		
-		k+=1;
 		switch (look.tag) {
 		case ';':								// stmt -> ;
 			move();
+			k+=1;
 			ps(k, SynNode.EMPTY);
 			k-=1;
 			return EmptyStmt.Null;
 			
 		case Tag.IF:		
-			ps(k, SynNode.IF);
 			match(Tag.IF);
 			match('(');
 			x = bool();
 			match(')');
-			k += 1;
-			ps(k, SynNode.STMT);
+			//k += 1;
+			//ps(k, SynNode.STMT);
 			s1 = stmt();
-			k-=1;
+			//k-=1;
 			if (look.tag != Tag.ELSE) {
+				k+=1;
+				ps(k,SynNode.IF);
 				k-=1;
 				return new If(x,s1);							// stmt -> if (bool) stmt
 			}
 			match(Tag.ELSE);					// stmt -> if (bool) stmt else stmt
+			s2 = stmt();
+			k+=1;
 			ps(k, SynNode.ELSE);
 			k+=1;
-			ps(k, SynNode.STMT);
-			s2 = stmt();
+			ps(k, x);
+			ps(k, s1);
+			ps(k, s2);
 			k-=1;
 			k-=1;
 			return new Else(x, s1, s2);
@@ -164,16 +173,16 @@ public class Parser {
 			return whileNode;
 			
 		case Tag.DO:							// stmt -> do stmt while (bool)
+			k+=1;
 			ps(k, SynNode.DO);
 			Do doNode = new Do();
 			match(Tag.DO);
-			k+=1;
-			ps(k, SynNode.STMT);
 			s1 = stmt();
-			k-=1;
+			ps(k+1, s1);
 			match(Tag.WHILE);
 			match('(');
 			x = bool();
+			ps(k+1, x);
 			match(')');
 			match(';');
 			doNode.init(s1,  x);
@@ -222,10 +231,10 @@ public class Parser {
 			return blk;
 			
 		default:								// stmt -> assign ;
-			ps(k, SynNode.ASSIGNMENT);
+			//ps(k, SynNode.ASSIGNMENT);
 			a1 = assign();
 			match(';');
-			k-=1;
+			//k-=1;
 			return new AssignStmt(a1);
 		}
 	}
@@ -243,6 +252,9 @@ public class Parser {
 			match('=');
 			ass = new AssignElem(acc, bool());
 		}
+		k+=1;
+		ps(k, ass);
+		k-=1;
 		return ass;
 	}
 
