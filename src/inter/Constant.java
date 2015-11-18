@@ -1,6 +1,7 @@
 package inter;
 
 import lexer.*;
+import treewalker.TreeWalker;
 
 /*
  * Constant ist eine Unterklasse von Singleton und beschreibt Konstante. 
@@ -19,6 +20,10 @@ public class Constant extends Singleton {
 	}
 
 	public static final Constant True = new Constant(Word.True),
-								False = new Constant(Word.False);
+			False = new Constant(Word.False);
+
+	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
+		return walker.walkConstantNode(this, arg);
+	}
 
 }

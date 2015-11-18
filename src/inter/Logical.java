@@ -11,6 +11,14 @@ import lexer.*;
 public abstract class Logical extends Expr {
 	Expr expr1, expr2;
 
+	public Expr getExpr1() {
+		return expr1;
+	}
+
+	public Expr getExpr2() {
+		return expr2;
+	}
+
 	Logical(Token tok, Expr x1, Expr x2) {
 		super(tok);
 		expr1 = x1;

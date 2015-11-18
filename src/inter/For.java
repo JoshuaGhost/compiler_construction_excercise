@@ -1,5 +1,7 @@
 package inter;
 
+import treewalker.TreeWalker;
+
 public class For extends Stmt {
 
 	/*
@@ -13,6 +15,22 @@ public class For extends Stmt {
 	Assignment iter_ass;
 	Stmt stmt;
 
+	public Expr getExpr() {
+		return expr;
+	}
+
+	public Assignment getInit_ass() {
+		return init_ass;
+	}
+
+	public Assignment getIter_ass() {
+		return iter_ass;
+	}
+
+	public Stmt getStmt() {
+		return stmt;
+	}
+
 	public For() {
 		expr = null;
 		stmt = null;
@@ -25,6 +43,10 @@ public class For extends Stmt {
 		init_ass = a1;
 		iter_ass = a2;
 		stmt = s;
+	}
+
+	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
+		return walker.walkForNode(this, arg);
 	}
 
 }

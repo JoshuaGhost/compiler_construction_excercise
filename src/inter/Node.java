@@ -1,7 +1,7 @@
 package inter;
 
 import lexer.*;
-
+import treewalker.TreeWalker;
 /*
  *  Die Klasse beschreibt Eigenschaften von Knoten im Syntaxbaum.
  *  Jeder Knoten hat eine Instanzenvariable lexline, die auf die
@@ -18,5 +18,7 @@ public abstract class Node {
 	void error(String s) {
 		throw new Error("near line " + lexline + ": " + s);
 	}
+	
+	public abstract <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg); 
 
 }

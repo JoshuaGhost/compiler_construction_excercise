@@ -15,5 +15,7 @@ public class Real extends Token {
 		super(Tag.REAL);
 		value = v;
 	}
-	
+	public String toString() {
+		return "" + value;
+	}	
 }
