@@ -12,5 +12,5 @@ public class Rel extends Logical {
 	public Rel(Token tok, Expr x1, Expr x2) {
 		super(tok, x1, x2);
 	}
-	
+
 }

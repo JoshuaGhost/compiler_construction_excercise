@@ -15,18 +15,4 @@ public class Else extends Stmt {
 		stmt2 = s2;
 	}
 
-	@Override 
-	public String toString() {
-		return ("if ("+expr.toString()+") "+
-					stmt1.toString()+
-				"else "+
-					stmt2.toString());
-	}
-	
-	public String toString(int k) {
-		return super.toString(k).replaceAll("Else", "IfElse") + "\n" +
-			   expr.toString(k+1) + "\n" +
-			   stmt1.toString(k+1)+ "\n" +
-			   stmt2.toString(k+1);
-	}
 }

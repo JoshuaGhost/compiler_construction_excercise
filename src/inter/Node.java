@@ -10,7 +10,7 @@ import lexer.*;
 
 public abstract class Node {
 	int lexline = 0;
-	
+
 	Node() {
 		lexline = Lexer.line;
 	}
@@ -19,12 +19,4 @@ public abstract class Node {
 		throw new Error("near line " + lexline + ": " + s);
 	}
 
-	public String toString(int k) {
-		StringBuffer pads = new StringBuffer();
-		for (int i = 0; i < k; i++){
-			pads.append("| ");
-		}
-		String[] parts = this.getClass().toString().split("\\.");
-		return pads.toString()+parts[1];
-	}
 }

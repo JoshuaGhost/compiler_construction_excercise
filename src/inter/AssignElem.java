@@ -15,16 +15,5 @@ public class AssignElem extends Assignment {
 		acc = x;
 		expr = y;
 	}
-	
-	@Override
-	public String toString() {
-		return acc.toString()+"="+expr.toString();
-	}
-	
-	public String toString(int k) {
-		return super.toString(k) + "\n" +
-			   acc.toString(k+1) + "\n" +
-			   expr.toString(k+1);
-	}
 
 }

@@ -11,14 +11,5 @@ public class Block extends Stmt {
 	public Block(Stmt s) {
 		stmts = s;
 	}
-	
-	@Override
-	public String toString() {
-		return("{"+stmts.toString()+"}");
-	}
-	
-	public String toString(int k) {
-		return super.toString(k) + "\n" +stmts.toString(k+1);
-	}
 
 }

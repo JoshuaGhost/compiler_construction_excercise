@@ -19,14 +19,4 @@ public class Do extends Stmt {
 		stmt = s;
 	}
 
-	@Override
-	public String toString() {
-		return ("do "+ stmt.toString()+"while ("+expr.toString()+");");
-	}
-	
-	public String toString(int k) {
-		return super.toString(k) + "\n" + 
-			   stmt.toString(k+1)+ "\n" +
-			   expr.toString(k+1);
-	}
 }

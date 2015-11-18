@@ -13,10 +13,5 @@ public class If extends Stmt {
 		expr = x;
 		stmt = s;
 	}
-	
-	@Override
-	public String toString() {
-		return ("if ("+expr.toString()+")\n"+stmt.toString());	
-	}
 
 }

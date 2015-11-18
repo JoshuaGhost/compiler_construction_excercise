@@ -14,13 +14,5 @@ public class Seq extends Stmt {
 		stmt1 = s1;
 		stmt2 = s2;
 	}
-	
-	@Override
-	public String toString() {
-		return (stmt1.toString()+stmt2.toString());
-	}
-	
-	public String toString(int k) {
-		return stmt1.toString(k)+"\n"+stmt2.toString(k);
-	}
+
 }

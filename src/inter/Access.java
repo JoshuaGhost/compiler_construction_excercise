@@ -18,16 +18,5 @@ public class Access extends Op {
 		array = a;
 		index = i;
 	}
-	
-	@Override
-	public String toString() {
-		return array.toString()+"["+index.toString()+"]";
-	}
-	
-	public String toString(int k) {
-		return super.toString(k) + "\n" +
-			   array.toString(k+1) + "\n" +
-			   index.toString(k+1);
-	}
 
 }

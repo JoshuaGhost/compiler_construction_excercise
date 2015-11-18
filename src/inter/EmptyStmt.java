@@ -13,8 +13,4 @@ public final class EmptyStmt extends Stmt {
 
 	public final static Stmt Null = new EmptyStmt();
 
-	@Override
-	public String toString() {
-		return "";
-	}
 }

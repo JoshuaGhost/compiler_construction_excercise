@@ -1,7 +1,5 @@
 package lexer;
 
-import java.nio.ShortBuffer;
-
 /* 
  * Die Klasse Token beschreibt allgemeine Eigenschaften eines Tokens.
  * Jedes Token hat ein tag (eine integer-Zahl), das die Tokenklasse
@@ -17,9 +15,4 @@ public class Token {
 		tag = t;
 	}
 	
-	@Override
-	public String toString() {
-		return String.valueOf((char)tag);
-	}
-
 }
