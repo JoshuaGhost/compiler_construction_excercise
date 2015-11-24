@@ -10,7 +10,7 @@ import lexer.*;
 public abstract class Op extends Expr {
 
 	public Op(Token tok) {
-		super(tok);
+		super(tok, null);
 	}
 
 }

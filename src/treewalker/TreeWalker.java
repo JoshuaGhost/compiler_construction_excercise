@@ -45,7 +45,7 @@ public abstract class TreeWalker <ReturnType, ArgumentType>{
 	 * 			walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 	 * 					return walker.walkXYZNode(this, arg);
 	 * 
-	 * definiert werden. Dies gilt natürlich nicht für abstrakte Klassen
+	 * definiert werden.
 	 */
 	
 	public abstract ReturnType walkAccessNode(Access node, ArgumentType arg);

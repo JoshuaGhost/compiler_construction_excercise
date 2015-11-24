@@ -1,6 +1,7 @@
 package inter;
 
 import lexer.Token;
+import symbols.*;
 
 	/*
 	 * Singleton ist eine abstrakte Unterklasse von Expr und beschreibt
@@ -9,8 +10,8 @@ import lexer.Token;
 
 public abstract class Singleton extends Expr {
 
-		Singleton(Token t) {
-			super(t);
+		Singleton(Token t, Type p) {
+			super(t, p);
 		}
 		
 	}

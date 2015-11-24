@@ -1,6 +1,7 @@
 package inter;
 
 import lexer.*;
+import symbols.*;
 
 
 /*
@@ -11,13 +12,23 @@ import lexer.*;
 
 public abstract class Expr extends Node {
 	Token op;
+	Type type;
 
 	public Token getOp() {
 		return op;
 	}
 
-	Expr(Token tok) {
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	Expr(Token tok, Type p) {
 		op = tok;
+		type = p;
 	}
 	
 }

@@ -12,6 +12,11 @@ import lexer.*;
 
 public class Type extends Word {
 	public int width = 0; // for storage allocation
+	
+
+	public int getWidth() {
+		return width;
+	}
 
 	public Type(String s, int tag, int w) {
 		super(s, tag);

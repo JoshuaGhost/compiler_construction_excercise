@@ -20,7 +20,7 @@ public abstract class Logical extends Expr {
 	}
 
 	Logical(Token tok, Expr x1, Expr x2) {
-		super(tok);
+		super(tok, null);
 		expr1 = x1;
 		expr2 = x2;
 	}

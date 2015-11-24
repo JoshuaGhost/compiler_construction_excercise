@@ -3,9 +3,9 @@ package main;
 import java.io.*;
 import lexer.*;
 import parser.*;
+import treewalker.CountNodesWalker;
 import treewalker.StringTreeWalker;
-//import treewalker.CountNodesWalker;
-//import treewalker.LinTreeWalker;
+import treewalker.LinTreeWalker;
 import inter.*;
 
 public class Main {
@@ -21,8 +21,9 @@ public class Main {
 	 * 
 	 * Parallel dazu wird ein Syntaxbaum mit Wurzel root erzeugt.
 	 * 
-	 * Der Treewalker stw versucht, die Eingabe zu rekonstruieren.
-	 * 	 * 
+	 * Danach wird durch den Treewalker ltw der Syntaxbaum ausgegeben
+	 * und die Knotenzahl mit dem Treewalker cnw bestimmt.
+	 * 
 	 */
 
 	public static void main(String[] args) throws IOException {
@@ -30,17 +31,13 @@ public class Main {
 		Parser parse = new Parser(lex);
 		Program root = parse.program();
 		System.out.println("\nParsing erfolgreich beendet\n");
+				
+		System.out.println("\nnun der Syntaxbaum\n");
+		LinTreeWalker ltw = new LinTreeWalker();
+		ltw.walk(root, "");
 		
-		System.out.println("nun die Rekonstruktion\n");	// siehe Aufgabe 1 Blatt 5
-		StringTreeWalker stw = new StringTreeWalker();
-		System.out.print(stw.walk(root, ""));
-		
-//		System.out.println("\nnun der Syntaxbaum\n");	// siehe Aufgabe 3 Blatt 5 
-//		LinTreeWalker ltw = new LinTreeWalker();
-//		ltw.walk(root, "");
-//		
-//		CountNodesWalker cnw = new CountNodesWalker();	// siehe Aufgabe 2 Blatt 5
-//		System.out.println ("\nmit Knotenzahl: " + cnw.walk(root,  null));
+		CountNodesWalker cnw = new CountNodesWalker();
+		System.out.println ("\nmit Knotenzahl: " + cnw.walk(root,  null));
 
 	}
 

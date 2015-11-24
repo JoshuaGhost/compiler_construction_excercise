@@ -1,6 +1,10 @@
 package parser;
 
 import java.io.*;
+
+import symbols.Array;
+import symbols.Env;
+import symbols.Type;
 import lexer.*;
 import inter.*;
 
@@ -10,11 +14,15 @@ import inter.*;
  * Scanner für diese Sprache. look enthält das lookahead-Token 
  * Beim Parsen wird ein Syntax-Baum erzeugt, die dazu notwendigen 
  * Klassen befinden sich im Paket inter.
+ * Die Klasse ist erweitert worden um Symboltabellen für die semantische
+ * Prüfung aufzubauen (siehe Klasse symbols.Env)
  */
 
 public class Parser {
 	private Lexer lex; 	// Lexical Analyser für diesen Parser
 	private Token look; // lookahead Token
+	Env top = null;		// die momentan aktuelle Symboltabelle ist leer
+	int used = 0;		// nächste freie Speicheradresse im Datenspeicher
 
 	public Parser(Lexer l) throws IOException {
 		lex = l;
@@ -43,13 +51,20 @@ public class Parser {
 	}
 
 	Block block() throws IOException { 					// block -> { decls stmts }
+		int savedUsed = used;
 		match('{');
+		Env savedEnv = top;								// momentane Symboltabelle retten
+		top = new Env(top);								// neue leere Symboltabelle mit der alten verknüpfen
 		decls();
 		Stmt s = stmts();
 		match('}');
+		top = savedEnv;									// Symboltabelle auf den Stand vor dem Block zurücksetzen 
+		used = savedUsed;								// Speicher freigeben
 		return new Block(s);
 	}
 
+	//**********************************************************************************
+	// dies ist die alte Version von decls - siehe Aufgabenblatt 6
 	void decls() throws IOException {
 		while (look.tag == Tag.BASIC) { 				// decls -> type id
 			type();
@@ -63,15 +78,8 @@ public class Parser {
 		}
 	}
 
-	void type() throws IOException {					// type -> basic dims
-		// expect look.tag == Tag.Basic
-		match(Tag.BASIC);
-		if (look.tag != '[')
-			return; // Type -> basic					// dims -> epsilon
-		else
-			dims(); // parse array type
-	}
-
+	
+	// dies ist die alte Version von dims  -  siehe Aufgabenblatt 6
 	void dims() throws IOException {					// dims -> [num] dims
 		match('[');
 		match(Tag.NUM);
@@ -80,6 +88,18 @@ public class Parser {
 			dims();
 		return;
 	}
+	//**********************************************************************************
+
+	Type type() throws IOException {					// type -> basic dims
+		// expect look.tag == Tag.Basic
+		Type p = (Type) look;
+		match(Tag.BASIC);
+		if (look.tag != '[')
+			return p; // Type -> basic					// dims -> epsilon
+		else
+			return dims(p); 							// parse array type
+	}
+	
 
 	Stmt stmts() throws IOException { 
 		if (look.tag == '}')							// stmts -> epsilon
@@ -165,7 +185,9 @@ public class Parser {
 		Assignment ass;
 		Token t = look;
 		match(Tag.ID);
-		Id id = new Id((Word) t);
+		Id id = top.get(t);	
+		if (id == null)									// ist der Identifier in der Symboltabelle?
+			error(t.toString() + " undeclared"); 		
 		if (look.tag == '=') { 							// assign -> id = bool
 			move();
 			ass = new AssignId(id, bool());
@@ -264,11 +286,11 @@ public class Parser {
 			match(')');
 			return e;
 		case Tag.NUM:									// factor -> num
-			e = new Constant(look);
+			e = new Constant(look, Type.Int);
 			move();
 			return e;
 		case Tag.REAL:									// factor -> real
-			e = new Constant(look);
+			e = new Constant(look, Type.Float);
 			move();
 			return e;
 		case Tag.TRUE:									// factor -> true
@@ -280,7 +302,9 @@ public class Parser {
 			move();
 			return e;
 		case Tag.ID:									// factor -> id offset
-			Id id = new Id((Word) look);
+			Id id = top.get(look);
+			if (id == null)
+				error(look.toString() + " undeclared");
 			move();
 			if (look.tag != '[')
 				return id;
