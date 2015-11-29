@@ -67,8 +67,17 @@ public class Parser {
 	// dies ist die alte Version von decls - siehe Aufgabenblatt 6
 	void decls() throws IOException {
 		while (look.tag == Tag.BASIC) { 				// decls -> type id
-			type();
+			Type t = type();
 			do {
+				Word var = new Word(look.toString(), Tag.ID);
+				Id newId = new Id(var, t, used);
+				top.put(look, newId);
+				System.out.println("in table: "+
+									var.toString()+
+								   "("+t.toString()+")  "+
+								   "rel.Adr: "+
+								   String.valueOf(used));
+				used += t.width;
 				match(Tag.ID);
 				if (look.tag != ',')	// kein weiterer ID zu dieser Typ-Deklaration
 					break;
@@ -80,13 +89,14 @@ public class Parser {
 
 	
 	// dies ist die alte Version von dims  -  siehe Aufgabenblatt 6
-	void dims() throws IOException {					// dims -> [num] dims
+	Array dims(Type p) throws IOException {					// dims -> [num] dims
 		match('[');
+		int size = Integer.valueOf(look.toString());
 		match(Tag.NUM);
 		match(']');
 		if (look.tag == '[')
-			dims();
-		return;
+			return new Array(size, dims(p));
+		return new Array(size, p);
 	}
 	//**********************************************************************************
 

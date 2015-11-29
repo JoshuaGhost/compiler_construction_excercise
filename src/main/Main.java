@@ -32,12 +32,12 @@ public class Main {
 		Program root = parse.program();
 		System.out.println("\nParsing erfolgreich beendet\n");
 				
-		System.out.println("\nnun der Syntaxbaum\n");
-		LinTreeWalker ltw = new LinTreeWalker();
-		ltw.walk(root, "");
+		//System.out.println("\nnun der Syntaxbaum\n");
+		//LinTreeWalker ltw = new LinTreeWalker();
+		//ltw.walk(root, "");
 		
-		CountNodesWalker cnw = new CountNodesWalker();
-		System.out.println ("\nmit Knotenzahl: " + cnw.walk(root,  null));
+		//CountNodesWalker cnw = new CountNodesWalker();
+		//System.out.println ("\nmit Knotenzahl: " + cnw.walk(root,  null));
 
 	}
 
