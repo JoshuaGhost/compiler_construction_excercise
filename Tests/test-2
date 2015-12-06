@@ -1,0 +1,20 @@
+{
+// Hier ein Test, um die Prioritaeten der 
+// Operationen zu testen.
+
+int a, b, c,d, e, f; bool i, j;
+int x, y; float w, z;
+int [10] g; int [20] h; int [5] [10] k;
+i = a < b || c+d*e > f && (a-b)*c > f;
+j = x<= y && ! (a > b);
+w = 12.3 + 5 * 0.7;
+z = 123 * -5;
+g[12*a+b] = h[a+b*c-d];
+k[5][6] = 123;
+if ( 3 <= 6.7) a = b+c;
+if ( 3 <= 6) a = b+c; else c = d*3;
+do a=a+b; while (a>10);
+do {a=a+b; b = b-1;} while (a>10);
+do if (2 < 3) c=c*c; else d=e+f; while (z-a>78);
+}
+.

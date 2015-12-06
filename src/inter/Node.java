@@ -15,6 +15,10 @@ public abstract class Node {
 		lexline = Lexer.line;
 	}
 
+	public int getLexline() {
+		return lexline;
+	}
+
 	void error(String s) {
 		throw new Error("near line " + lexline + ": " + s);
 	}

@@ -1,0 +1,15 @@
+{
+int [60] a;  int[40][50] b; int[10][20][30] c; 
+int i; int j; int k; 
+
+a[i] = 120;
+b[i][j] = i*j;	
+c[i][j][k] = 1234;
+
+// und nun Konstante als Index
+
+a[4] = 100;
+b[4][6] = 200;
+c[7][i][9] = 300;
+}
+.

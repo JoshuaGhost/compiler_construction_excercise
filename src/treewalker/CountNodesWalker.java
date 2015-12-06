@@ -29,30 +29,30 @@ import inter.While;
  * Jede Methode gibt die Zahl der Knoten des jeweiligen Teilbaums zurück.
  */
 
-public class CountNodesWalker extends TreeWalker<Integer, Object> {
+public class CountNodesWalker extends TreeWalker<Integer, Void> {
 
 	@Override
-	public Integer walkAccessNode(Access node, Object arg) {
+	public Integer walkAccessNode(Access node, Void arg) {
 		int a = walk(node.getArray(), null);
 		int i = walk(node.getIndex(), null);
 		return  a+i+1;
 	}
 
 	@Override
-	public Integer walkArithNode(Arith node, Object arg) {
+	public Integer walkArithNode(Arith node, Void arg) {
 		int ex1 = walk(node.getExpr1(), null);
 		int ex2 = walk(node.getExpr2(), null);
 		return  ex1+ex2+1;
 	}
 
 	@Override
-	public Integer walkUnaryNode(Unary node, Object arg) {
+	public Integer walkUnaryNode(Unary node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		return  ex+1;
 	}
 
 	@Override
-	public Integer walkAndNode(And node, Object arg) {
+	public Integer walkAndNode(And node, Void arg) {
 		int ex1 = walk(node.getExpr1(), null);
 		int ex2 = walk(node.getExpr2(), null);
 		return  ex1+ex2+1;
@@ -60,85 +60,85 @@ public class CountNodesWalker extends TreeWalker<Integer, Object> {
 	}
 
 	@Override
-	public Integer walkOrNode(Or node, Object arg) {
+	public Integer walkOrNode(Or node, Void arg) {
 		int ex1 = walk(node.getExpr1(), null);
 		int ex2 = walk(node.getExpr2(), null);
 		return  ex1+ex2+1;
 	}
 
 	@Override
-	public Integer walkRelNode(Rel node, Object arg) {
+	public Integer walkRelNode(Rel node, Void arg) {
 		int ex1 = walk(node.getExpr1(), null);
 		int ex2 = walk(node.getExpr2(), null);
 		return  ex1+ex2+1;
 	}
 
 	@Override
-	public Integer walkNotNode(Not node, Object arg) {
+	public Integer walkNotNode(Not node, Void arg) {
 		int ex = walk(node.getExpr1(), null);
 		return  ex+1;
 	}
 
 	@Override
-	public Integer walkIdNode(Id node, Object arg) {
+	public Integer walkIdNode(Id node, Void arg) {
 		return 1;
 	}
 
 	@Override
-	public Integer walkConstantNode(Constant node, Object arg) {
+	public Integer walkConstantNode(Constant node, Void arg) {
 		return 1;
 	}
 
 	@Override
-	public Integer walkAssignIdNode(AssignId node, Object arg) {
+	public Integer walkAssignIdNode(AssignId node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int id = walk(node.getIdent(), null);
 		return  ex+id+1;
 	}
 
 	@Override
-	public Integer walkAssignElemNode(AssignElem node, Object arg) {
+	public Integer walkAssignElemNode(AssignElem node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int acc = walk(node.getAcc(), null);
 		return  ex+acc+1;
 	}
 	
 	@Override
-	public Integer walkAssignStmtNode(AssignStmt node, Object arg) {
+	public Integer walkAssignStmtNode(AssignStmt node, Void arg) {
 		return walk(node.getAssign(), null) + 1;
 	}
 
 	@Override
-	public Integer walkEmptyStmtNode(EmptyStmt node, Object arg) {
+	public Integer walkEmptyStmtNode(EmptyStmt node, Void arg) {
 		return 1;
 	}
 
 	@Override
-	public Integer walkWhileNode(While node, Object arg) {
+	public Integer walkWhileNode(While node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int st = walk(node.getStmt(), null);
 		return  ex+st+1;
 	}
 
 	@Override
-	public Integer walkDoNode(Do node, Object arg) {
+	public Integer walkDoNode(Do node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int st = walk(node.getStmt(), null);
 		return  ex+st+1;
 	}
 
 	@Override
-	public Integer walkProgramNode(Program node, Object arg) {
+	public Integer walkProgramNode(Program node, Void arg) {
 		return walk(node.getBlock(), null)+1;
 	}
 
 	@Override
-	public Integer walkBlockNode(Block node, Object arg) {
+	public Integer walkBlockNode(Block node, Void arg) {
 		return walk(node.getStmts(), null)+1;
 	}
 
 	@Override
-	public Integer walkIfNode(If node, Object arg) {
+	public Integer walkIfNode(If node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int st = walk(node.getStmt(), null);
 		return  ex+st+1;
@@ -146,7 +146,7 @@ public class CountNodesWalker extends TreeWalker<Integer, Object> {
 
 
 	@Override
-	public Integer walkForNode(For node, Object arg) {
+	public Integer walkForNode(For node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int as1 = walk(node.getInit_ass(), null);
 		int as2 = walk(node.getIter_ass(), null);
@@ -155,14 +155,14 @@ public class CountNodesWalker extends TreeWalker<Integer, Object> {
 	}
 
 	@Override
-	public Integer walkSeqNode(Seq node, Object arg) {
+	public Integer walkSeqNode(Seq node, Void arg) {
 		int st1 = walk(node.getStmt1(), null);
 		int st2 = walk(node.getStmt2(), null);
 		return st1+st2+1;
 	}
 
 	@Override
-	public Integer walkElseNode(Else node, Object arg) {
+	public Integer walkElseNode(Else node, Void arg) {
 		int ex = walk(node.getExpr(), null);
 		int st1 = walk(node.getStmt1(), null);
 		int st2 = walk(node.getStmt2(), null);	
@@ -170,7 +170,7 @@ public class CountNodesWalker extends TreeWalker<Integer, Object> {
 	}
 
 	@Override
-	public Integer walkBreakNode(Break node, Object arg) {
+	public Integer walkBreakNode(Break node, Void arg) {
 		return 1;
 	}
 

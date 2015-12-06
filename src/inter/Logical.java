@@ -18,6 +18,14 @@ public abstract class Logical extends Expr {
 	public Expr getExpr2() {
 		return expr2;
 	}
+	
+	public void setExpr1(Expr expr1) {
+		this.expr1 = expr1;
+	}
+
+	public void setExpr2(Expr expr2) {
+		this.expr2 = expr2;
+	}
 
 	Logical(Token tok, Expr x1, Expr x2) {
 		super(tok, null);

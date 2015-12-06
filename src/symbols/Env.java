@@ -1,7 +1,7 @@
 /*
  * Dies ist die Klasse Env, die die Symboltabelle implementiert.
  * Dargestellt wird sie als eine verkettete Liste von Hash-Tabellen,
- * auf die jeweils mit einem Token als Schlüssel zugegriffen wird.
+ * auf die jeweils mit einem Token als Schlüssel zugegeriffen wird.
  * Als Werte hat man Objekte der Klasse Id.
  * @author rp
  */

@@ -20,6 +20,10 @@ public class AssignId extends Assignment {
 		return expr;
 	}
 
+	public void setExpr(Expr expr) {
+		this.expr = expr;
+	}
+
 	public AssignId(Id i, Expr x) {
 		ident = i;
 		expr = x;

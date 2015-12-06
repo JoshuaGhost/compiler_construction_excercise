@@ -1,0 +1,10 @@
+
+{
+float a,b,c,d,e, r;
+int f;
+
+if ( 3 <= 6) a = b+c; else c = d*3;
+
+do if (2 < 3) c=c*c; else r=e+f; while (a-b>78.0);
+}
+.

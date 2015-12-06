@@ -1,0 +1,10 @@
+{
+	int a,b,c,d,e,f,g,h,x,y,z;
+	
+	while (a<b || e>f)
+		if (c<d && g<h)
+			x = y+z;
+		else
+			x = y-z;
+}
+.

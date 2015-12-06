@@ -22,6 +22,10 @@ public class Access extends Op {
 		return index;
 	}
 
+	public void setIndex(Expr index) {
+		this.index = index;
+	}
+
 	public Access(Expr a, Expr i) {
 		super(new Word("[]", Tag.INDEX));
 		array = a;

@@ -1,0 +1,19 @@
+// Test für break-Anweisung
+
+{
+int i,j,n,a,d;
+
+for (i = j+1; i < n; i = i+1) {
+	do 
+		if (a == 1) 
+			while (a < d) {
+				 a=a+2;
+				 break;
+				 }
+		else 
+			break;
+	while(a > 4);
+	break;
+	}
+}
+.

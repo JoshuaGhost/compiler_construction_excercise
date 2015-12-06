@@ -1,0 +1,11 @@
+{
+int[5][10] B; int[10][20][30] A;
+
+int x; int y; int u; int v; int z;
+
+
+x = A[y][B[u][v]][z];
+
+}
+.
+

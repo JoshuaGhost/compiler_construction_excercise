@@ -11,7 +11,18 @@ public class Array extends Type {
 		of = p;
 	}
 	
+	public Type getOf() {
+		return of;
+	}
 
+	public static Type basetype (Type t) {
+		
+		while (t.tag == Tag.INDEX) 
+			t = ((Array)t).of;
+		
+	return t;
+	}
+	
 	public String toString() {
 		return "[" + size + "] " + of.toString();
 	}

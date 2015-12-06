@@ -1,0 +1,19 @@
+// ein modifiziertes Beispiel aus der Vorlesung
+
+{
+int i; int j; int n; int a; int d; int b; int c;
+
+for ( i = j+1; i < n; i = i+1)
+    do 
+        if (a == 1) 
+            while (a < d)
+                a = a+2;
+        else
+            if (a == 2)
+                b = b+1;
+            else
+                c = c+1;
+    while (a >= d);
+
+}
+.

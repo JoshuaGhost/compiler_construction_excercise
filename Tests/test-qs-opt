@@ -1,0 +1,20 @@
+// hier ist das Quicksort-Verfahren
+// erweitert zum Beispiel 6.4 aus dem Skript
+
+{			
+	int i, j; 
+	int v, x;
+	int n, m;
+	int[100] a;
+
+	i = m-1; j = n; v = a[n];
+	while (true) {
+		do i = i+1; while (a[i] < v);
+		do j = j-1; while (a[j] > v);
+		if (i >= j) break;
+		x = a[i]; a[i] = a[j]; a[j] = x;
+	}
+	x = a[i]; a[i] = a[n]; a[n] = x;
+	
+}
+.

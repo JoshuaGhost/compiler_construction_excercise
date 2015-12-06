@@ -1,0 +1,15 @@
+// ein Beispiel aus der Vorlesung
+
+{
+int i; int N; int [10] D; int x; int c;
+
+while (i <= N && D[i] > x) {
+    if (D[i] > c) {
+        while (i >= 0) 
+        i = i - D[i];
+        }
+    else
+        i = i+c;
+    }
+}
+.

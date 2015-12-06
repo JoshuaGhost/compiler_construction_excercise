@@ -22,6 +22,10 @@ public class AssignElem extends Assignment {
 		return expr;
 	}
 
+	public void setExpr(Expr expr) {
+		this.expr = expr;
+	}
+
 	public AssignElem(Access x, Expr y) {
 		acc = x;
 		expr = y;

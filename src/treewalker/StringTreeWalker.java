@@ -33,105 +33,105 @@ import inter.While;
  */
 
 
-public class StringTreeWalker extends TreeWalker<String, String> {
+public class StringTreeWalker extends TreeWalker<String, Void> {
 
 
-	public String walkAccessNode(Access node, String arg) {
+	public String walkAccessNode(Access node, Void arg) {
 		return walk(node.getArray(), null) + " [ " + walk(node.getIndex(), null) + " ] ";
 	}
 
 
-	public String walkAndNode(And node, String arg) {
+	public String walkAndNode(And node, Void arg) {
 		return "(" + walk(node.getExpr1(), null) + " && " + walk(node.getExpr2(), null) + ")";
 
 	}
 
 
-	public String walkArithNode(Arith node, String arg) {
+	public String walkArithNode(Arith node, Void arg) {
 		return "(" + walk(node.getExpr1(), null) + " " + node.getOp().toString() + " "
 				+ walk(node.getExpr2(), null) + ")";
 	}
 
 
-	public String walkAssignElemNode(AssignElem node, String arg) {
+	public String walkAssignElemNode(AssignElem node, Void arg) {
 		return walk(node.getAcc(), null) + " = "
 				+ walk(node.getExpr(), null);
 	}
 
 
-	public String walkAssignIdNode(AssignId node, String arg) {
+	public String walkAssignIdNode(AssignId node, Void arg) {
 		return walk(node.getIdent(), null) + " = " + walk(node.getExpr(), null);
 	}
 
-	public String walkAssignStmtNode(AssignStmt node, String arg) {
+	public String walkAssignStmtNode(AssignStmt node, Void arg) {
 		return walk(node.getAssign(), null) + " ; ";
 	}
 	
-	public String walkBlockNode(Block node, String arg) {
+	public String walkBlockNode(Block node, Void arg) {
 		return "{ " + walk(node.getStmts(), null) + " }";
 	}
 
 
-	public String walkBreakNode(Break node, String arg) {
+	public String walkBreakNode(Break node, Void arg) {
 		return "break;";
 	}
 
-	public String walkConstantNode(Constant node, String arg) {
+	public String walkConstantNode(Constant node, Void arg) {
 		return node.getOp().toString();
 	}
 
-	public String walkDoNode(Do node, String arg) {
+	public String walkDoNode(Do node, Void arg) {
 		return "do " + walk(node.getStmt(), null) + " while " + walk(node.getExpr(), null) + ";";
 
 	}
 
 	
-	public String walkElseNode(Else node, String arg) {
+	public String walkElseNode(Else node, Void arg) {
 		return "if (" + walk(node.getExpr(), null) + ")\n" + walk(node.getStmt1(), null)
 				+ "\nelse " + walk(node.getStmt2(), null);
 	}
 
 
-	public String walkEmptyStmtNode(EmptyStmt node, String arg) {
+	public String walkEmptyStmtNode(EmptyStmt node, Void arg) {
 		return null;
 	}
 
 
-	public String walkForNode(For node, String arg) {
+	public String walkForNode(For node, Void arg) {
 		return "for ( " + walk(node.getInit_ass(), null) + " ; "
 				+ walk(node.getExpr(), null) + " ; " + walk(node.getIter_ass(), null)
 				+ " )\n" + walk(node.getStmt(), null);
 	}
 
 
-	public String walkIdNode(Id node, String arg) {
+	public String walkIdNode(Id node, Void arg) {
 		return node.getOp().toString();
 	}
 
 	
-	public String walkIfNode(If node, String arg) {
+	public String walkIfNode(If node, Void arg) {
 		return "if " + walk(node.getExpr(), null) + "\n" + walk(node.getStmt(), null);
 	}
 
 	
-	public String walkNotNode(Not node, String arg) {
+	public String walkNotNode(Not node, Void arg) {
 		return "(" + node.getOp().toString() + " " + walk(node.getExpr2(), null) + ")";
 	}
 
 
-	public String walkOrNode(Or node, String arg) {
+	public String walkOrNode(Or node, Void arg) {
 		return "(" + walk(node.getExpr1(), null) + " || " + walk(node.getExpr2(), null) + ")";
 	}
 
 
-	public String walkRelNode(Rel node, String arg) {
+	public String walkRelNode(Rel node, Void arg) {
 		return "(" + walk(node.getExpr1(), null) + " " + node.getOp().toString() + " "
 		+ walk(node.getExpr2(), null) + ")";
 
 	}
 
 
-	public String walkSeqNode(Seq node, String arg) {
+	public String walkSeqNode(Seq node, Void arg) {
 		if (node.getStmt2() == EmptyStmt.Null)
 			return walk(node.getStmt1(), null) + "\n";
 		else
@@ -140,16 +140,16 @@ public class StringTreeWalker extends TreeWalker<String, String> {
 	}
 
 
-	public String walkUnaryNode(Unary node, String arg) {
+	public String walkUnaryNode(Unary node, Void arg) {
 		return "(" + node.getOp().toString() + " " + walk(node.getExpr(), null) + ")";
 	}
 
-	public String walkWhileNode(While node, String arg) {
+	public String walkWhileNode(While node, Void arg) {
 		return "while (" + walk(node.getExpr(), null) + ")\n" + walk(node.getStmt(), null);
 
 	}
 
-	public String walkProgramNode(Program node, String arg) {
+	public String walkProgramNode(Program node, Void arg) {
 		return walk(node.getBlock(), null);
 
 

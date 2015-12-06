@@ -1,0 +1,36 @@
+// Hier soll das Verhalten des Compilers 
+// bei geschachtelten Bloecken geprueft werden
+// wichtig ist die korrekte Speicherzuordnung
+
+{
+int i; float r; int [10]a; float s;
+
+r = s * 3;
+a[i] = i+1;
+
+// nun der geschachtelte Block 1
+{
+int k; int i; int [10]c; float s;
+
+k = i;
+c[k] = a[i];
+r = s*s;
+}
+
+// weiter im Text
+
+s = i+1;
+
+// nun der geschachtelte Block 2
+
+{
+ float r; int i;
+
+r = i*4;
+}
+
+a[i] = i+2;
+
+}
+.
+

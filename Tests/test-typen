@@ -1,0 +1,37 @@
+{
+char c; bool b;
+int i;  float f;
+
+char [10]ca; bool[10]ba;
+int [10] ia; float[20]fa;
+
+b = true;
+//b = 3;
+//c = 12;
+
+//i = b;
+i = c;
+i = 3;
+//i = 3.5;
+f = 3;
+f = 3.5;
+
+//i = ia;
+//ia = ia;
+
+//nun Arrayzugriffe
+
+ba[i]=true;
+//ba[i] = 3;
+//ca[i] = 3;
+//ia[b] = 5;
+ia[c] = 5;
+ia[i] = 4;
+//ia[i] = 4.5;
+fa[i] = c;
+fa[i] = i;
+fa[i] = 3.5;
+
+
+}
+.

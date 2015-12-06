@@ -1,0 +1,15 @@
+{
+int a; int b ; int c; int d;
+bool x, y, z;
+// Hier ist Kommentar
+
+a = 2/b;
+a = - 5;
+b = a + - 5;
+a = -a*b;
+
+x = y && z;
+
+
+}
+.

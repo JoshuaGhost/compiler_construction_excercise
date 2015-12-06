@@ -1,0 +1,24 @@
+{
+int a; int b ; int c; int d;
+bool x, y, z;
+bool[10]u;
+
+// Hier ist Kommentar
+
+a = 2/b;
+x = a < b && c > d;
+a = - 5;
+u[4] = a < b || c > d;
+a = -a*b;
+
+x = y && u[5];
+b = a + -5;
+
+x = y && z || x;
+a = -a*b;
+x = y && z || x && !z;
+
+if (u[7]) a = 4;
+
+}
+.

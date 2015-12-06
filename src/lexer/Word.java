@@ -22,7 +22,6 @@ public class Word extends Token {
 		return lexeme;
 	}
 
-
 	public static final Word
 		and = new Word("&&", Tag.AND),
 		or = new Word("||", Tag.OR),
@@ -32,7 +31,10 @@ public class Word extends Token {
 		ge = new Word(">=", Tag.GE),
 		minus = new Word("minus", Tag.MINUS),
 		True = new Word("true", Tag.TRUE),
-		False = new Word("false", Tag.FALSE);
+		False = new Word("false", Tag.FALSE),
+		temp = new Word("t", Tag.TEMP),
+		toInt = new Word("toInt", Tag.TOI),				// zwei neue Operationen zumr automatischen
+		toFloat = new Word("toFloat", Tag.TOF);			// Typanpassung
 
 
 }
