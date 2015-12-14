@@ -15,6 +15,10 @@ public class If extends Stmt {
 		return expr;
 	}
 
+	public void setExpr(Expr expr) {
+		this.expr = expr;
+	}
+
 	public Stmt getStmt() {
 		return stmt;
 	}

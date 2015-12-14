@@ -1,6 +1,7 @@
 package inter;
 
 import lexer.*;
+import symbols.Type;
 import treewalker.TreeWalker;
 
 /*
@@ -17,15 +18,28 @@ public class Access extends Op {
 	public Expr getArray() {
 		return array;
 	}
+	
+	public void setArray(Expr array) {
+		this.array = array;
+	}
 
 	public Expr getIndex() {
 		return index;
 	}
 
+	public void setIndex(Expr index) {
+		this.index = index;
+	}
+
 	public Access(Expr a, Expr i) {
+		this(a, i, null);
+	}
+	
+	public Access(Expr a, Expr i, Type p) {
 		super(new Word("[]", Tag.INDEX));
 		array = a;
 		index = i;
+		type = p;
 	}
 	
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {

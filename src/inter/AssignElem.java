@@ -18,8 +18,16 @@ public class AssignElem extends Assignment {
 		return acc;
 	}
 
+	public void setAcc(Access acc) {
+		this.acc = acc;
+	}
+
 	public Expr getExpr() {
 		return expr;
+	}
+
+	public void setExpr(Expr expr) {
+		this.expr = expr;
 	}
 
 	public AssignElem(Access x, Expr y) {

@@ -9,5 +9,6 @@ package inter;
  * muss.
  */
 
-public abstract class Assignment extends Node {
+public abstract class Assignment extends Stmt {
+
 }

@@ -1,12 +1,9 @@
 package parser;
 
 import java.io.*;
-
-import symbols.Array;
-import symbols.Env;
-import symbols.Type;
 import lexer.*;
 import inter.*;
+import symbols.*;
 
 /*
  * Diese Klasse implementiert einen rekursive descent Parser für die 
@@ -59,26 +56,34 @@ public class Parser {
 		Stmt s = stmts();
 		match('}');
 		top = savedEnv;									// Symboltabelle auf den Stand vor dem Block zurücksetzen 
-		used = savedUsed;								// Speicher freigeben
+		used = savedUsed;
 		return new Block(s);
 	}
 
-	//**********************************************************************************
-	// dies ist die alte Version von decls - siehe Aufgabenblatt 6
+	/*
+	 * In decls werden jetzt die Deklarationen abgearbeitet und mit der Typinformation
+	 * die aktuelle Symboltabelle geschrieben.
+	 */
+	
 	void decls() throws IOException {
+		Token tok;
 		while (look.tag == Tag.BASIC) { 				// decls -> type id
-			Type t = type();
+			Type p = type();
 			do {
-				Word var = new Word(look.toString(), Tag.ID);
-				Id newId = new Id(var, t, used);
-				top.put(look, newId);
-				System.out.println("in table: "+
-									var.toString()+
-								   "("+t.toString()+")  "+
-								   "rel.Adr: "+
-								   String.valueOf(used));
-				used += t.width;
+				tok = look;
 				match(Tag.ID);
+				Id id = new Id((Word)tok, p, used);
+                if (top.put(tok,  id) != null)  {   // Eintragen in Symboltabelle - falls tok
+                									// schon vorhanden, gibt put Wert != null zurück
+                		error("Variable " + id.getOp().toString() + " redeclared"); 
+                }	
+	/*
+	 * 			Zum Testen der richtigen Funktion der Symboltabelle:
+	 *
+	 *			System.out.println("in table: " + id.getOp().toString() + "(" + id.getType() +")" + "\t rel.Adr: " + id.getOffset());
+	 * 
+	 */
+				used += p.getWidth();
 				if (look.tag != ',')	// kein weiterer ID zu dieser Typ-Deklaration
 					break;
 				move();					// Komma überlesen
@@ -87,19 +92,6 @@ public class Parser {
 		}
 	}
 
-	
-	// dies ist die alte Version von dims  -  siehe Aufgabenblatt 6
-	Array dims(Type p) throws IOException {					// dims -> [num] dims
-		match('[');
-		int size = Integer.valueOf(look.toString());
-		match(Tag.NUM);
-		match(']');
-		if (look.tag == '[')
-			return new Array(size, dims(p));
-		return new Array(size, p);
-	}
-	//**********************************************************************************
-
 	Type type() throws IOException {					// type -> basic dims
 		// expect look.tag == Tag.Basic
 		Type p = (Type) look;
@@ -107,9 +99,19 @@ public class Parser {
 		if (look.tag != '[')
 			return p; // Type -> basic					// dims -> epsilon
 		else
-			return dims(p); 							// parse array type
+			return dims(p); // parse array type
 	}
-	
+
+	Type dims(Type p) throws IOException {					// dims -> [num] dims
+		//  Der Grundtyp des Feldes wird als Parameter übergeben
+		match('[');
+		Token tok = look;
+		match(Tag.NUM);
+		match(']');
+		if (look.tag == '[')
+			p = dims(p);
+		return new Array(((Num)tok).value, p);
+	}
 
 	Stmt stmts() throws IOException { 
 		if (look.tag == '}')							// stmts -> epsilon
@@ -194,6 +196,7 @@ public class Parser {
 	Assignment assign() throws IOException {					
 		Assignment ass;
 		Token t = look;
+		
 		match(Tag.ID);
 		Id id = top.get(t);	
 		if (id == null)									// ist der Identifier in der Symboltabelle?
@@ -330,6 +333,7 @@ public class Parser {
 
 	Access offset(Id a) throws IOException { 			// offset -> [bool] offset | epsilon
 		Expr e;
+		
 		match('[');
 		e = bool();
 		match(']');

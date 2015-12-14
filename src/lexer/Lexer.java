@@ -38,6 +38,8 @@ public class Lexer {
 		reserve(Type.Char);
 		reserve(Type.Bool);
 		reserve(Type.Float);
+		reserve(Word.toInt);
+		reserve(Word.toFloat);
 	}
 	/*
 	 * readch() liest das nächste Zeichen der Eingabe und speichert es in peek
@@ -144,7 +146,7 @@ public class Lexer {
 			Word w = (Word) words.get(s);  // Suche Wort in Tabelle
 			if (w != null)
 				return w;				   // Wort gefunden
-			w = new Word(s, Tag.ID);  
+			w = new Word(s, Tag.ID); 
 			words.put(s, w);				// Wort eintragen
 			return w;
 		}

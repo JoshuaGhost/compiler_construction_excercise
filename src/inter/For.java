@@ -19,6 +19,10 @@ public class For extends Stmt {
 		return expr;
 	}
 
+	public void setExpr(Expr expr) {
+		this.expr = expr;
+	}
+
 	public Assignment getInit_ass() {
 		return init_ass;
 	}

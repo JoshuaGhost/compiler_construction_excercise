@@ -11,8 +11,7 @@ import lexer.*;
  */
 
 public class Type extends Word {
-	public int width = 0; // for storage allocation
-	
+	int width = 0; // for storage allocation
 
 	public int getWidth() {
 		return width;
@@ -24,9 +23,9 @@ public class Type extends Word {
 	}
 
 	public static final Type 
-	Int   = new Type("int", 	Tag.BASIC, 4),
-	Float = new Type("float", 	Tag.BASIC, 8), 
-	Char  = new Type("char",	Tag.BASIC, 1),
-	Bool  = new Type("bool", 	Tag.BASIC, 1);
+		Int   = new Type("int", 	Tag.BASIC, 4),
+		Float = new Type("float", 	Tag.BASIC, 8), 
+		Char  = new Type("char",	Tag.BASIC, 1),
+		Bool  = new Type("bool", 	Tag.BASIC, 1);
 
 }

@@ -15,6 +15,10 @@ public class Unary extends Op {
 		return expr;
 	}
 
+	public void setExpr(Expr expr) {
+		this.expr = expr;
+	}
+
 	public Unary(Token tok, Expr x) { // behandelt unäres minus, für ! siehe Not
 		super(tok);
 		expr = x;

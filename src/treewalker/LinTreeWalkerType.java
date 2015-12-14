@@ -33,63 +33,63 @@ import inter.While;
  * Jede Methode gibt null als Rückgabewert zurück.
  */
 
-public class LinTreeWalker extends TreeWalker<Void, String> {
+public class LinTreeWalkerType extends TreeWalker<Void, String> {
 	static String indent = "|  ";
 	
-	public  Void walkAccessNode(Access node, String preStr) {
-		System.out.println(preStr + "Access");
+	public Void walkAccessNode(Access node, String preStr) {
+		System.out.println(preStr + "Access" + "(" + node.getType() +")");
 		walk(node.getArray(), preStr + indent);
 		walk(node.getIndex(), preStr + indent);
 		return null;
 	}
 	
-	public  Void walkArithNode(Arith node, String preStr) {
-		System.out.println(preStr + "Arith (" + node.getOp().toString() + ")");
+	public Void walkArithNode(Arith node, String preStr) {
+		System.out.println(preStr + "Arith (" + node.getOp().toString() + ")" + "(" + node.getType() +")");
 		walk(node.getExpr1(),preStr + indent);
 		walk(node.getExpr2(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkUnaryNode(Unary node, String preStr) {
-		System.out.println(preStr + "Unary(" + node.getOp().toString()  + ")");
+		System.out.println(preStr + "Unary(" + node.getOp().toString()  + ")" + "(" + node.getType() +")");
 		walk (node.getExpr(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkAndNode(And node, String preStr) {
-		System.out.println(preStr + "And");
+		System.out.println(preStr + "And" + "(" + node.getType() +")");
 		walk (node.getExpr1(), preStr + indent);
 		walk( node.getExpr2(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkOrNode(Or node, String preStr) {
-		System.out.println(preStr + "Or");
+		System.out.println(preStr + "Or" + "(" + node.getType() +")");
 		walk(node.getExpr1(), preStr + indent);
 		walk(node.getExpr2(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkRelNode(Rel node, String preStr) {
-		System.out.println(preStr + "Rel (" + node.getOp().toString() + ")");
+		System.out.println(preStr + "Rel (" + node.getOp().toString() + ")" + "(" + node.getType() +")");
 		walk(node.getExpr1(), preStr + indent);
 		walk(node.getExpr2(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkNotNode(Not node, String preStr) {
-		System.out.println(preStr + "Not");
+		System.out.println(preStr + "Not" + "(" + node.getType() +")");
 		walk(node.getExpr1(), preStr + indent);
 		return null;
 	}
 	
 	public Void walkIdNode(Id node, String preStr) {
-		System.out.println(preStr + "Id (" + node.getOp().toString() + ")");
+		System.out.println(preStr + "Id (" + node.getOp().toString() + ")" + "(" + node.getType() +")");
 		return null;
 	}
 	
 	public Void walkConstantNode(Constant node, String preStr) {
-		System.out.println(preStr + "Constant (" + node.getOp().toString() + ")");
+		System.out.println(preStr + "Constant (" + node.getOp().toString() + ")" + "(" + node.getType() +")");
 		return null;
 	}
 	
@@ -112,7 +112,6 @@ public class LinTreeWalker extends TreeWalker<Void, String> {
 		walk(node.getAssign(), preStr + indent);
 		return null;
 	}
-	
 	public Void walkEmptyStmtNode(EmptyStmt node, String preStr) {
 		System.out.println(preStr + "EmptyStmt");
 		return null; 
@@ -145,7 +144,6 @@ public class LinTreeWalker extends TreeWalker<Void, String> {
 		return null;
 	}
 	
-	
 	public Void walkForNode(For node, String preStr) {
 		System.out.println(preStr + "For");
 		walk(node.getInit_ass(), preStr + indent);
@@ -158,7 +156,6 @@ public class LinTreeWalker extends TreeWalker<Void, String> {
 	public Void walkSeqNode(Seq node, String preStr) {
 		System.out.println(preStr + "Seq");
 		walk(node.getStmt1(), preStr +indent);
-		//System.out.println(preStr +indent);	// alle Statements einer Sequenz erscheinen auf gleicher Stufe
 		walk(node.getStmt2(), preStr);
 		return null;
 	}
@@ -175,7 +172,6 @@ public class LinTreeWalker extends TreeWalker<Void, String> {
 		System.out.println(preStr + "Break");
 		return null;
 	}
-
 
 	public Void walkProgramNode(Program node, String preStr) {
 		System.out.println(preStr + "Program");

@@ -1,7 +1,7 @@
 /*
  * Dies ist die Klasse Env, die die Symboltabelle implementiert.
  * Dargestellt wird sie als eine verkettete Liste von Hash-Tabellen,
- * auf die jeweils mit einem Token als Schlüssel zugegriffen wird.
+ * auf die jeweils mit einem Token als Schlüssel zugegeriffen wird.
  * Als Werte hat man Objekte der Klasse Id.
  * @author rp
  */
@@ -20,8 +20,8 @@ public class Env {
 		prev = prevEnv;
 	}
 	
-	public void put(Token w, Id i) {
-		table.put(w, i);
+	public Id put(Token w, Id i) {
+		return table.put(w, i);
 	}
 	
 	public Id get (Token w) {
