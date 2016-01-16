@@ -306,4 +306,13 @@ public class SemanticWalker extends TreeWalker<Type, Void>{
 		return null;
 	}
 
+	// Für den Compiler muss auch eine walk-Methode für temporäre Variable existieren
+	
+	@Override
+	public Type walkTempNode(Temp node, Void arg) {
+		// keine Aktion, da im Syntaxbaum füe die semantischen Analyse
+		// keine  temporären Variablen existieren.
+		return null;
+	}
+
 }

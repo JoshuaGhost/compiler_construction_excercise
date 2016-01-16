@@ -20,7 +20,7 @@ public class Constant extends Singleton {
 		super(new Num(i),p);
 	}
 	public static final Constant True = new Constant(Word.True, Type.Bool),
-			False = new Constant(Word.False, Type.Bool);
+								False = new Constant(Word.False, Type.Bool);
 
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 		return walker.walkConstantNode(this, arg);

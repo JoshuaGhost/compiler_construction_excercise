@@ -20,6 +20,9 @@ public class Id extends Singleton {
 		offset = b;
 	}
 
+	public String toString() {
+		return op.toString();
+	}
 
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 		return walker.walkIdNode(this, arg);

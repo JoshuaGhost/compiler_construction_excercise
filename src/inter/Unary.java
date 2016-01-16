@@ -24,6 +24,10 @@ public class Unary extends Op {
 		expr = x;
 	}
 
+	public String toString() {
+		return op.toString() + " " + expr.toString();
+	}
+
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 		return walker.walkUnaryNode(this, arg);
 	}

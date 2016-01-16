@@ -42,6 +42,10 @@ public class Access extends Op {
 		type = p;
 	}
 	
+	public String toString() {
+		return array.toString() + " [ " + index.toString() + " ] ";
+	}
+
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 		return walker.walkAccessNode(this, arg);
 	}

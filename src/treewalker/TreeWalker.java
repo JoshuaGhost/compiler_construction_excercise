@@ -23,6 +23,7 @@ import inter.Rel;
 import inter.Seq;
 import inter.Unary;
 import inter.While;
+import inter.Temp;
 
 /*
  * Diese Klasse definiert einen abstrakten TreeWalker, der den Syntaxbaum durchläuft
@@ -70,5 +71,7 @@ public abstract class TreeWalker <ReturnType, ArgumentType>{
 	public abstract ReturnType walkSeqNode(Seq node, ArgumentType arg);
 	public abstract ReturnType walkElseNode(Else node, ArgumentType arg);
 	public abstract ReturnType walkBreakNode(Break node, ArgumentType arg);
+	// Da jetzt auch temporäre Knoten im Syntaxgraph auftauchen werden:
+	public abstract ReturnType walkTempNode(Temp node, ArgumentType arg);
 
 }

@@ -20,6 +20,7 @@ import inter.Or;
 import inter.Program;
 import inter.Rel;
 import inter.Seq;
+import inter.Temp;
 import inter.Unary;
 import inter.While;
 
@@ -180,6 +181,14 @@ public class LinTreeWalker extends TreeWalker<Void, String> {
 	public Void walkProgramNode(Program node, String preStr) {
 		System.out.println(preStr + "Program");
 		walk(node.getBlock(), preStr);
+		return null;
+	}
+
+	// Für den Compiler muss auch eine walk-Methode für temporäre Variable existieren
+	
+	@Override
+	public Void walkTempNode(Temp node, String preStr) {
+		System.out.println(preStr + "Temp (" + node.getOp().toString() + ")");
 		return null;
 	}
 

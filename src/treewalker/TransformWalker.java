@@ -2,7 +2,7 @@ package treewalker;
 /*
  * Dies ist eine Unterklasse der Klasse TreeWalker, die den Syntaxbaum 
  * durchläuft und Array-Zugriffe transformiert.
- * Es werden mehrdimensionale Arrays zu eindimensionalen umgeformt
+ * Es werden mehrdimensionale Arrays zu eindimensionalen umgeformt und
  * es wird die Größe der Arrayelemente berücksichtigt.
  * Ein Access-Knoten verweist danach auf den Namen des Arrays und auf einen 
  * arithmetischen Ausdruck, der das Offset enthält.
@@ -32,6 +32,7 @@ import inter.Or;
 import inter.Program;
 import inter.Rel;
 import inter.Seq;
+import inter.Temp;
 import inter.Unary;
 import inter.Expr;
 import inter.While;
@@ -47,10 +48,24 @@ public class TransformWalker extends TreeWalker<Expr, Void> {
 	 */
 	
 	Expr transformAccess (Access node) {
+		Expr tNode;
+		Type type;
+		Expr w, t1;
 
-		/*
-		 * Hier fehlt der Methodenrumpf
-		 */
+		type = node.getArray().getType();
+		if (node.getArray().getClass() == Access.class) {
+			
+			// mehrdimensionales Feld, rekursiv umwandeln
+			tNode = transformAccess((Access)node.getArray());
+			
+			w = new Constant(((Array)type). getSize(), Type.Int);
+			t1 = new Arith(new Token('*'), tNode, w, Type.Int);
+			t1 = new Arith(new Token('+'), t1, node.getIndex(), Type.Int);
+			return  t1;
+		}
+		else {
+		}	return node.getIndex();		
+
 	}
 	
 	/*
@@ -73,13 +88,11 @@ public class TransformWalker extends TreeWalker<Expr, Void> {
 		Expr rNode;
 		Expr w, t;
 		Id  aName = arrayName(node);
-		/*
-		 * Hier fehlt etwas
-		 */
+		Type type = node.getArray().getType();		
+		
 		rNode = transformAccess(node);
-		/*
-		 * Hier fehlt auch etwas
-		 */
+		w = new Constant(((Array)type).getOf().getWidth(), Type.Int);
+		t = new Arith(new Token('*'), rNode, w, Type.Int);
 		return new Access(aName, t, node.getType());
 	}
 	
@@ -225,5 +238,9 @@ public class TransformWalker extends TreeWalker<Expr, Void> {
 		return null;
 	}
 
+	@Override
+	public Expr walkTempNode(Temp node, Void arg) {
+		return node;
+	}
 
 }

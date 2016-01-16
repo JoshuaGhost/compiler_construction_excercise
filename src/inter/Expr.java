@@ -31,4 +31,9 @@ public abstract class Expr extends Node {
 		type = p;
 	}
 	
+	// Zur textuellen Ausgabe von Operation oder Operand
+	public String toString() {
+		return op.toString();
+	}
+
 }

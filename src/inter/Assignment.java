@@ -10,5 +10,6 @@ package inter;
  */
 
 public abstract class Assignment extends Stmt {
-
+	public Assignment() {
+	}
 }

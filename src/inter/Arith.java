@@ -37,6 +37,10 @@ public class Arith extends Op {
 		type = p;	
 	}
 	
+	public String toString() {
+		return expr1.toString() + " " + op.toString() + " " + expr2.toString();
+	}
+
 	public <ReturnType, ArgumentType> ReturnType walk(TreeWalker<ReturnType, ArgumentType> walker, ArgumentType arg) {
 		return walker.walkArithNode(this, arg);
 	}

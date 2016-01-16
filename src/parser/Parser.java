@@ -74,8 +74,8 @@ public class Parser {
 				match(Tag.ID);
 				Id id = new Id((Word)tok, p, used);
                 if (top.put(tok,  id) != null)  {   // Eintragen in Symboltabelle - falls tok
-                									// schon vorhanden, gibt put Wert != null zurück
-                		error("Variable " + id.getOp().toString() + " redeclared"); 
+													// schon vorhanden, gibt put Wert != null zurück
+                	error("Variable " + id.getOp().toString() + " redeclared"); 
                 }	
 	/*
 	 * 			Zum Testen der richtigen Funktion der Symboltabelle:
@@ -124,6 +124,7 @@ public class Parser {
 		Expr x;
 		Stmt s1, s2;
 		Assignment a1, a2;
+		Stmt savedStmt;
 
 		switch (look.tag) {
 		case ';':								// stmt -> ;
@@ -144,16 +145,21 @@ public class Parser {
 			
 		case Tag.WHILE:							// stmt -> while (bool) stmt
 			While whileNode = new While();
+			savedStmt = Stmt.getEnclosing();	// Vorbereitung für das break-Statement;
+			Stmt.setEnclosing(whileNode);  
 			match(Tag.WHILE);
 			match('(');
 			x = bool();
 			match(')');
 			s1 = stmt();
 			whileNode.init(x, s1);
+			Stmt.setEnclosing(savedStmt);
 			return whileNode;
 			
 		case Tag.DO:							// stmt -> do stmt while (bool)
 			Do doNode = new Do();
+			savedStmt = Stmt.getEnclosing();	// Vorbereitung für das break-Statement;
+			Stmt.setEnclosing(doNode);  
 			match(Tag.DO);
 			s1 = stmt();
 			match(Tag.WHILE);
@@ -162,10 +168,13 @@ public class Parser {
 			match(')');
 			match(';');
 			doNode.init(s1,  x);
+			Stmt.setEnclosing(savedStmt);
 			return doNode;
 			
 		case Tag.FOR: 							// stmt -> for (assign; bool; assign) stmt
 			For forNode = new For();
+			savedStmt = Stmt.getEnclosing();	// Vorbereitung für das break-Statement;
+			Stmt.setEnclosing(forNode);  
 			match(Tag.FOR);
 			match('(');
 			a1 = assign();	 // erste Komponente ist ein assign
@@ -176,6 +185,7 @@ public class Parser {
 			match(')'); 
 			s1 = stmt();
 			forNode.init(a1, x, a2, s1);
+			Stmt.setEnclosing(savedStmt);
 			return forNode;
 			
 		case Tag.BREAK:							// stmt -> break ;
@@ -189,7 +199,7 @@ public class Parser {
 		default:								// stmt -> assign ;
 			a1 = assign();
 			match(';');
-			return new AssignStmt(a1);
+			return a1;
 		}
 	}
 
