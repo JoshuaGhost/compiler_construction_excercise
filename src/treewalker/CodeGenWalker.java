@@ -35,7 +35,7 @@ import inter.Temp;
 import inter.Unary;
 import inter.While;
 
-public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
+public class CodeGenWalker extends TreeWalker<Expr, LabelPair>{
 
 	static private int labelNumber = 0; // zur fortlaufenden Nummerierung der Labels
 	      
@@ -55,43 +55,73 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	}
 
 	/*
-	 * Ausgabe der Sprungbefehle bei einem Vergleich:
 	 * test ist die zu prüfende Bedingung, 
 	 * args ist das Paar (trueLabel, falseLabel) der Sprungziele. 
+	 * Sonderfälle treten auf, wenn eines der Label 0 ist,
 	 */
 	void emitJumps(String test, LabelPair args) {
-
-			emit("if " + test + " goto L" + args.trueLabel());
-			emit("goto L" + args.falseLabel());
+		int t = args.trueLabel();
+		int f = args.falseLabel();
+		if (t != 0 && f != 0) {
+			emit("if " + test + " goto L" + t);
+			emit("goto L" + f);
+		}
+		else if (t != 0) {
+			emit("if " + test + " goto L" + t);
+		}
+		else if (f != 0) {
+			emit("iffalse " + test + " goto L" + f);
+		}
+		else ;
 	}
 	
 	/*
-	 * Wenn bei einer Wertzuweisung der Ausdruck vom Typ Boolean ist,
-	 * muss er speziell verarbeitet werden, da in den 3-Adress-Befehlen
-	 * keine booleschen Operationen erlaubt sind.
+	 * Wenn der Ausdruck vom Typ Boolean ist, muss er speziell
+	 * verarbeitet werden, da in unserem 3-Adress-Befehlen
+	 * keine Booleschen Operationen erlaubt sind.
 	 */
 	
 	Singleton processBooleanExpr(Expr node) {
 		
 		int t = newLabel();
 		int f = newLabel();
-		int next = newLabel();
 		Temp tmp = new Temp(Type.Bool);
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+		walk(node, new LabelPair(0,f));
+		emit (tmp.toString() + " = true");
+		emit ("goto L" + t);
+		emitLabel (f);
+		emit (tmp.toString() + " = false");
+		emitLabel(t);
 		return tmp;		
 	}
+
+	
+	/*
+	 * reduce gibt den Namen einer Variablen zurück, die nach Auswertung
+	 * den Wert von exp enthält. Ist exp keine Konstante oder Variable, dann 
+	 * verweist exp auf einen singulären Syntaxknoten, der mittels toString 
+	 * die rechte Seite eines 3-Adress-Befehls mit einer neuen temporären
+	 * Variablen auf der linken Seite bildet, 
+	 */
+	Expr reduce (Expr exp) {
+		if (exp.getClass()  == Constant.class || exp.getClass() == Id.class)
+			return exp;
+		Temp t = new Temp(exp.getType());
+		emit (t.toString() + " = " + exp.toString());
+		return t;
+	}
+	
 
 
 //  ---------------------- Hier jetzt die Methoden des Treewalkers ------------
 //   Jede Methode für einen Ausdruck bekommt das Paar (trueLabel, falseLabel) als Argument
 //   und liefert ein Singleton als Wert des Attributs place zurück.
+//   In Hinblick auf Aufgabe 2 des 10. Aufgabenblatts liefern die walk-Methoden
+//   jetzt ein Objekt der Klasse Expr zurück.
 	
-	public Singleton walkAccessNode(Access node, LabelPair arg) {
-		Singleton e = walk (node.getIndex(), arg);
+	
+	public Expr walkAccessNode(Access node, LabelPair arg) {
+		Expr e = walk (node.getIndex(), arg);
 		Temp t = new Temp(node.getType());
 		emit(t.toString() + " = " + node.getArray().toString() + "[" + e.toString() + "]");
 		if (node.getType() == Type.Bool)
@@ -100,23 +130,18 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	}
 	
 	
-	public Singleton walkArithNode(Arith node, LabelPair arg) {	
+	public Expr walkArithNode(Arith node, LabelPair arg) {
+		Expr e1 = walk(node.getExpr1(), arg);
+		Expr e2 = walk(node.getExpr2(), arg);	
 		Temp t = new Temp(node.getType());
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+		emit(t.toString() + " = " + e1.toString() + " " + node.getOp().toString() +" " + e2.toString());
 		return t;
 	}
 	
-	public Singleton walkUnaryNode(Unary node, LabelPair arg) {
+	public Expr walkUnaryNode(Unary node, LabelPair arg) {
+		Expr e = walk(node.getExpr(), arg);
 		Temp t = new Temp(node.getType());
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+		emit(t.toString() + " = " + node.getOp().toString() + " " + e.toString());
 		return t;
 	}
 	
@@ -126,45 +151,42 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	 * der Booleschen Funktion entsprechend weitergereicht.
 	 */
 	
-	public Singleton walkAndNode(And node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
+	public Expr walkAndNode(And node, LabelPair arg) {
+		int t = arg.trueLabel();
+		int f = arg.falseLabel();		
+		int label = newLabel();
 		
+		walk (node.getExpr1(), new LabelPair(label,f));
+		emitLabel(label);
+		walk (node.getExpr2(), new LabelPair(t,f));
 		return null;
 	}
 	
-	public Singleton walkOrNode(Or node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
-         		
+	public Expr walkOrNode(Or node, LabelPair arg) {
+		int t = arg.trueLabel();
+		int f = arg.falseLabel();		
+		int label = newLabel();
+		
+		walk (node.getExpr1(), new LabelPair(t,label));
+		emitLabel(label);
+		walk (node.getExpr2(), new LabelPair(t,f));
 		return null;
 	}
 	
-	public Singleton walkRelNode(Rel node, LabelPair arg) {
-
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+	public Expr walkRelNode(Rel node, LabelPair arg) {
+		Expr e1 = walk (node.getExpr1(), null);
+		Expr e2 = walk (node.getExpr2(), null);
+		String test = e1.toString() + node.getOp().toString() + e2.toString();
 		emitJumps(test, arg);
 		return null;
 	}
 	
-	public Singleton walkNotNode(Not node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+	public Expr walkNotNode(Not node, LabelPair arg) {
+		walk(node.getExpr1(), new LabelPair(arg.falseLabel(), arg.trueLabel()));
 		return null;
 	}
 	
-	public Singleton walkAssignStmtNode(AssignStmt node, LabelPair arg) {
+	public Expr walkAssignStmtNode(AssignStmt node, LabelPair arg) {
 		walk(node.getAssign(), arg);
 		return null;
 	}
@@ -178,35 +200,29 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	 * 
 	 */
 	
-	public Singleton walkAssignIdNode(AssignId node, LabelPair arg) {
-		Singleton eCode;
+	public Expr walkAssignIdNode(AssignId node, LabelPair arg) {
+		Expr eCode;
 		if (node.getExpr().getType() == Type.Bool)	
 			eCode = processBooleanExpr(node.getExpr());	
 		else {
 			eCode = walk(node.getExpr(), arg);
 		}
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+		emit(node.getIdent().toString() + " = " + eCode.toString());
 		return null;
 	}
 	
 
-	public Singleton walkAssignElemNode(AssignElem node, LabelPair arg) {
-		Singleton e1;
+	public Expr walkAssignElemNode(AssignElem node, LabelPair arg) {
+		Expr e1;
 		if (node.getExpr().getType() == Type.Bool) {
 			e1 = processBooleanExpr(node.getExpr());
 		}
 		else {
 			e1 = walk(node.getExpr(), arg);
 		}
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+		Access a = node.getAcc();
+		Expr e2 = walk(a.getIndex(), arg);
+		emit(a.getArray().toString()+"["+e2.toString() + "] = " + e1.toString());
 		return null;
 	}
 	
@@ -214,58 +230,83 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	 * Steueranweisungen werden wie im Skript beschrieben übersetzt.
 	 */
 	
-	public Singleton walkWhileNode(While node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
+	public Expr walkWhileNode(While node, LabelPair arg) {
+		int next = arg.nextLabel();
+		int label = newLabel();
+		int beginLabel = newLabel();
 		
+		emitLabel(beginLabel);
+		node.setNext(next);
+		walk(node.getExpr(), new LabelPair(label,next));
+		emitLabel(label);
+		walk(node.getStmt(), new LabelPair(beginLabel,0));
+		emit("goto L" + beginLabel);
 		return null;
 		
 	}
 	
-	public Singleton walkDoNode(Do node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
-		
+	public Expr walkDoNode(Do node, LabelPair arg) {
+		int next = arg.nextLabel();
+		int begin = newLabel();
+		int label = newLabel();		
+
+		node.setNext(next);
+		emitLabel(begin);
+		walk(node.getStmt(), new LabelPair(label,0));
+		emitLabel(label);
+		walk(node.getExpr(), new LabelPair(begin,next));
 		return null;		
 	}
 	
-	public Singleton walkForNode(For node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
+	public Expr walkForNode(For node, LabelPair arg) {
+		int beginLabel = newLabel();
+		int label1 = newLabel();
+		int label2 = newLabel();
+		int next = arg.nextLabel();
 		
+		node.setNext(next);
+		walk(node.getInit_ass(), new LabelPair(beginLabel, 0));
+		emitLabel(beginLabel);
+		walk(node.getExpr(), new LabelPair(label2, next));
+		emitLabel(label1);
+		walk(node.getIter_ass(), new LabelPair(beginLabel, 0));
+		emit("goto L" + beginLabel);	
+		emitLabel(label2);
+		walk(node.getStmt(), new LabelPair(label1, 0));
+		emit("goto L" + label1);
 		return null;
 	}
 
-	public Singleton walkIfNode(If node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
+	public Expr walkIfNode(If node, LabelPair arg) {
+		int label = newLabel();
+		int next = arg.nextLabel();
 		
+		walk(node.getExpr(), new LabelPair (label,next));
+		emitLabel(label);
+		walk (node.getStmt(), new LabelPair(next,0));		
 		return null;
 	}
 	
-	public Singleton walkElseNode(Else node, LabelPair arg) {
-       
-        /*
-         *  Hier fehlt etwas
-         */
+	public Expr walkElseNode(Else node, LabelPair arg) {
+		int label1 = newLabel();
+		int label2 = newLabel();
+		int next = arg.nextLabel();
 		
+		walk(node.getExpr(), new LabelPair (label1,label2));
+		emitLabel(label1);
+		walk (node.getStmt1(), new LabelPair(next,0));
+		emit("goto L" + next);
+		emitLabel(label2);
+		walk(node.getStmt2(), new LabelPair(next, 0));
 		return null;
 	}
 	
-	public Singleton walkBreakNode(Break node, LabelPair arg) {
+	public Expr walkBreakNode(Break node, LabelPair arg) {
 		emit("goto L" + node.getStmt().getNext());
 		return null;
 	}
 
-	public Singleton walkProgramNode(Program node, LabelPair arg) {
+	public Expr walkProgramNode(Program node, LabelPair arg) {
 		int end = newLabel();
 		
 		walk(node.getBlock(), new LabelPair(end, 0));
@@ -273,13 +314,13 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 		return null;
 	}
 
-	public Singleton walkBlockNode (Block node, LabelPair arg) {
+	public Expr walkBlockNode (Block node, LabelPair arg) {
 		walk(node.getStmts(), arg);
 		return null;
 	}
 	
 	
-	public Singleton walkSeqNode(Seq node, LabelPair arg) {
+	public Expr walkSeqNode(Seq node, LabelPair arg) {
 		if (node.getStmt1() == EmptyStmt.Null) 
 			walk(node.getStmt2(), arg);
 		else if (node.getStmt2() == EmptyStmt.Null)
@@ -294,22 +335,22 @@ public class CodeGenWalker extends TreeWalker<Singleton, LabelPair>{
 	}
 	
 	
-	public Singleton walkEmptyStmtNode(EmptyStmt node, LabelPair arg) {
+	public Expr walkEmptyStmtNode(EmptyStmt node, LabelPair arg) {
 		return null;
 	}
 	
-	public Singleton walkIdNode(Id node, LabelPair arg) {
+	public Expr walkIdNode(Id node, LabelPair arg) {
 		if (node.getType() == Type.Bool)
 			emitJumps(node.getOp().toString(), arg);
 		return node;
 	}
 	
 
-	public Singleton walkConstantNode(Constant node, LabelPair arg) {
+	public Expr walkConstantNode(Constant node, LabelPair arg) {
 		return node;
 	}
 
-	public Singleton walkTempNode(Temp node, LabelPair arg) {
+	public Expr walkTempNode(Temp node, LabelPair arg) {
 		return node;
 	}
 	

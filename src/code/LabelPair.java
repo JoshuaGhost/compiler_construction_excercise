@@ -23,13 +23,6 @@ public class LabelPair {
 		return second;
 	}
 
-//	int beginLabel() {
-//		return first;
-//	}
-//	
-//	int endLabel() {
-//		return second;
-//	}
 	public int nextLabel() {
 		return first;
 	}
